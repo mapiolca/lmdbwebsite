@@ -12,10 +12,11 @@ Il depend du module Stancer `mapiolca/stancer` pour :
 
 ## Installation
 
-1. Copier ce dossier dans `htdocs/custom/lmdbwebsite`.
-2. Installer et activer le module `stancer`.
+1. Deposer ce dossier comme module custom Dolibarr `lmdbwebsite`.
+2. Installer et activer les modules `Website` et `stancer`.
 3. Activer le module `lmdbwebsite`.
 4. Configurer les references produits et l'utilisateur technique dans `Configuration > Modules > LMDB Website`.
+5. Cliquer sur **Creer le site web** dans la configuration du module pour creer ou synchroniser le site natif Dolibarr Website.
 
 ## Pages publiques
 
@@ -32,4 +33,6 @@ Les sources du site sont dans ce module :
 - `src/main.js`
 - `scripts/build-site.mjs`
 
-Les exports pre-generes sont fournis dans `resources/dolibarr-website`. Depuis `htdocs/custom/lmdbwebsite`, `npm run build` les regenere et produit aussi une previsualisation dans `dist/site`.
+Les exports pre-generes sont fournis dans `resources/dolibarr-website`. Depuis le dossier `lmdbwebsite`, `npm run build` les regenere et produit aussi une previsualisation dans `dist/site`.
+
+Le bouton **Creer le site web** copie ces exports vers le repertoire Dolibarr `documents/website/lmdbwebsite`, cree le site `lmdbwebsite` dans le module natif Website si necessaire, puis cree ou met a jour les pages gerees par le module. Les pages ajoutees manuellement dans Dolibarr Website sont conservees.

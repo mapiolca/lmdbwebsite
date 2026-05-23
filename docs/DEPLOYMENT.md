@@ -2,20 +2,25 @@
 
 ## Site public
 
-1. Importer les contenus pre-generes de `resources/dolibarr-website/pages` dans le module Website de Dolibarr.
-2. Publier les assets de `resources/dolibarr-website/assets` dans le site Dolibarr ou dans le repertoire public choisi.
-3. Optionnel : depuis `htdocs/custom/lmdbwebsite`, lancer `npm run build` pour regenerer les exports et controler le rendu dans `dist/site`.
-4. Verifier que les URL historiques restent disponibles :
+1. Activer le module natif `Website` de Dolibarr.
+2. Ouvrir `Configuration > Modules > LMDB Website`.
+3. Cliquer sur **Creer le site web**.
+4. Verifier que le site `lmdbwebsite` existe dans le module Website et que les fichiers ont ete copies dans `documents/website/lmdbwebsite`.
+5. Optionnel : depuis le dossier `lmdbwebsite`, lancer `npm run build` pour regenerer les exports embarques dans `resources/dolibarr-website` et controler le rendu dans `dist/site`.
+6. Relancer **Creer le site web** apres chaque regeneration pour synchroniser les pages et assets Dolibarr.
+7. Verifier que les URL historiques restent disponibles :
    - `/`
    - `/fonctionnement/`
    - `/tarifs/`
    - `/contact/`
    - `/mentions-legales/`
 
+Le bouton est idempotent : il met a jour les pages gerees par `lmdbwebsite`, garde les pages manuelles intactes, et cree les nouvelles pages en brouillon.
+
 ## Module Dolibarr
 
 1. Installer et configurer le module Stancer `mapiolca/stancer`.
-2. Copier le dossier `lmdbwebsite` vers `htdocs/custom/lmdbwebsite`.
+2. Deposer le dossier `lmdbwebsite` dans le repertoire custom de Dolibarr.
 3. Activer le module `LMDB Website` dans Dolibarr.
 4. Renseigner la configuration du module :
    - `LMDBWEBSITE_SITE_URL`

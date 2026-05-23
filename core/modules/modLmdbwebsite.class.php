@@ -61,6 +61,7 @@ class modLmdbwebsite extends DolibarrModules
 			'always3' => 'modContrat',
 			'always4' => 'modFacture',
 			'always5' => 'modStancer',
+			'always6' => 'modWebsite',
 		);
 		$this->requiredby = array();
 		$this->conflictwith = array();
