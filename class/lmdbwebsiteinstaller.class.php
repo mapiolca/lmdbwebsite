@@ -421,6 +421,9 @@ class LmdbwebsiteInstaller
 		$page->type_container = 'page';
 		$page->pageurl = $definition['pageurl'];
 		$page->ref = $definition['pageurl'];
+		if ($created || trim((string) $page->aliasalt) === '') {
+			$page->aliasalt = $definition['pageurl'];
+		}
 		$page->title = $definition['title'];
 		$page->description = $definition['description'];
 		$page->keywords = $definition['keywords'];
