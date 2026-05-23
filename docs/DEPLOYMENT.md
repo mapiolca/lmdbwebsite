@@ -24,6 +24,7 @@ Le bouton est idempotent : il met a jour les pages gerees par `lmdbwebsite`, gar
 3. Activer le module `LMDB Website` dans Dolibarr.
 4. Renseigner la configuration du module :
    - `LMDBWEBSITE_SITE_URL`
+   - `LMDBWEBSITE_DOLIBARR_URL`
    - `LMDBWEBSITE_PRODUCT_REF_BASE`
    - `LMDBWEBSITE_PRODUCT_REF_STANDARD`
    - `LMDBWEBSITE_PRODUCT_REF_PRO`
@@ -32,10 +33,12 @@ Le bouton est idempotent : il met a jour les pages gerees par `lmdbwebsite`, gar
    - `LMDBWEBSITE_PRODUCT_REF_PRO_ANNUAL` si un produit annuel dedie existe
    - `LMDBWEBSITE_USER_ID`
    - `LMDBWEBSITE_BANK_ACCOUNT_ID`
-5. Creer ou verifier les produits/services Dolibarr correspondant aux offres.
+5. Creer ou verifier les services Dolibarr correspondant aux offres, puis les choisir dans les selecteurs de la configuration du module.
 6. Activer les taches planifiees du module :
    - reconciliation des paiements Stancer ;
    - generation des echeances recurrentes.
+
+Si le site Website utilise un virtualhost separe, `LMDBWEBSITE_SITE_URL` doit pointer vers ce site et `LMDBWEBSITE_DOLIBARR_URL` vers l'URL publique de Dolibarr. Apres modification d'une de ces URL, relancer **Creer le site web** pour resynchroniser les liens d'abonnement.
 
 ## Parcours de test Stancer
 

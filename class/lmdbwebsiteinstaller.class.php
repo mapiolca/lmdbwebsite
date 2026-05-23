@@ -400,6 +400,7 @@ class LmdbwebsiteInstaller
 
 		$content = (string) file_get_contents($sourceFile);
 		$content = $this->wrapPageContent($content, $definition);
+		$content = $this->normalizeSubscriptionLinks($content);
 		$content = $this->normalizeInternalLinks($content);
 
 		$page = new WebsitePage($this->db);
@@ -843,6 +844,26 @@ class LmdbwebsiteInstaller
 		);
 
 		return str_replace(array_keys($replacements), array_values($replacements), $content);
+	}
+
+	/**
+	 * Normalize subscription links to the public Dolibarr endpoint URL.
+	 *
+	 * @param string $content HTML content
+	 * @return string
+	 */
+	private function normalizeSubscriptionLinks($content)
+	{
+		$baseUrl = lmdbwebsite_public_url('subscribe.php');
+		$result = preg_replace_callback(
+			'~href=(["\'])(?:https?://[^"\']+)?/custom/lmdbwebsite/public/subscribe\.php([^"\']*)\1~',
+			function ($matches) use ($baseUrl) {
+				return 'href='.$matches[1].$this->escapeHtml($baseUrl.$matches[2]).$matches[1];
+			},
+			$content
+		);
+
+		return $result === null ? $content : $result;
 	}
 
 	/**

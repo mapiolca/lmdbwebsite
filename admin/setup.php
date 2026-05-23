@@ -15,6 +15,7 @@
 
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 dol_include_once('/lmdbwebsite/lib/lmdbwebsite.lib.php');
 dol_include_once('/lmdbwebsite/class/lmdbwebsiteinstaller.class.php');
 
@@ -31,15 +32,17 @@ $installer = new LmdbwebsiteInstaller($db);
 
 $settings = array(
 	'LMDBWEBSITE_SITE_URL' => array('label' => 'LmdbwebsiteSiteUrl', 'type' => 'text'),
-	'LMDBWEBSITE_PRODUCT_REF_BASE' => array('label' => 'LmdbwebsiteProductRefBase', 'type' => 'text'),
-	'LMDBWEBSITE_PRODUCT_REF_STANDARD' => array('label' => 'LmdbwebsiteProductRefStandard', 'type' => 'text'),
-	'LMDBWEBSITE_PRODUCT_REF_PRO' => array('label' => 'LmdbwebsiteProductRefPro', 'type' => 'text'),
-	'LMDBWEBSITE_PRODUCT_REF_BASE_ANNUAL' => array('label' => 'LmdbwebsiteProductRefBaseAnnual', 'type' => 'text'),
-	'LMDBWEBSITE_PRODUCT_REF_STANDARD_ANNUAL' => array('label' => 'LmdbwebsiteProductRefStandardAnnual', 'type' => 'text'),
-	'LMDBWEBSITE_PRODUCT_REF_PRO_ANNUAL' => array('label' => 'LmdbwebsiteProductRefProAnnual', 'type' => 'text'),
+	'LMDBWEBSITE_DOLIBARR_URL' => array('label' => 'LmdbwebsiteDolibarrUrl', 'type' => 'text'),
+	'LMDBWEBSITE_PRODUCT_REF_BASE' => array('label' => 'LmdbwebsiteProductRefBase', 'type' => 'service'),
+	'LMDBWEBSITE_PRODUCT_REF_STANDARD' => array('label' => 'LmdbwebsiteProductRefStandard', 'type' => 'service'),
+	'LMDBWEBSITE_PRODUCT_REF_PRO' => array('label' => 'LmdbwebsiteProductRefPro', 'type' => 'service'),
+	'LMDBWEBSITE_PRODUCT_REF_BASE_ANNUAL' => array('label' => 'LmdbwebsiteProductRefBaseAnnual', 'type' => 'service'),
+	'LMDBWEBSITE_PRODUCT_REF_STANDARD_ANNUAL' => array('label' => 'LmdbwebsiteProductRefStandardAnnual', 'type' => 'service'),
+	'LMDBWEBSITE_PRODUCT_REF_PRO_ANNUAL' => array('label' => 'LmdbwebsiteProductRefProAnnual', 'type' => 'service'),
 	'LMDBWEBSITE_USER_ID' => array('label' => 'LmdbwebsiteUserId', 'type' => 'number'),
 	'LMDBWEBSITE_BANK_ACCOUNT_ID' => array('label' => 'LmdbwebsiteBankAccountId', 'type' => 'number'),
 );
+$serviceOptions = lmdbwebsite_admin_get_service_options($db);
 
 if ($action === 'save') {
 	$error = 0;
@@ -108,7 +111,11 @@ foreach ($settings as $key => $meta) {
 	$value = getDolGlobalString($key, '');
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans($meta['label']).'</td>';
-	print '<td><input class="flat minwidth300" type="'.$meta['type'].'" name="'.$key.'" value="'.dol_escape_htmltag($value).'"></td>';
+	if ($meta['type'] === 'service') {
+		print '<td>'.lmdbwebsite_admin_print_service_select($key, $value, $serviceOptions).'</td>';
+	} else {
+		print '<td><input class="flat minwidth300" type="'.$meta['type'].'" name="'.$key.'" value="'.dol_escape_htmltag($value).'"></td>';
+	}
 	print '</tr>';
 }
 
@@ -178,3 +185,92 @@ print dol_get_fiche_end();
 
 llxFooter();
 $db->close();
+
+/**
+ * Return service products available for the current multicompany context.
+ *
+ * @param DoliDB $db Database handler
+ * @return array<int,array<string,string>>
+ */
+function lmdbwebsite_admin_get_service_options($db)
+{
+	global $conf;
+
+	$entities = array((int) $conf->entity);
+	if (function_exists('getEntity')) {
+		$entities = array();
+		$productEntities = getEntity('product');
+		if (is_array($productEntities)) {
+			$productEntities = implode(',', $productEntities);
+		}
+		foreach (explode(',', (string) $productEntities) as $entity) {
+			$entities[] = (int) $entity;
+		}
+	}
+	$entities[] = 0;
+	$entities = array_values(array_unique(array_filter($entities, 'is_numeric')));
+	if (empty($entities)) {
+		$entities = array((int) $conf->entity);
+	}
+
+	$sql = 'SELECT rowid, ref, label, entity FROM '.MAIN_DB_PREFIX.'product';
+	$sql .= ' WHERE fk_product_type = 1';
+	$sql .= ' AND tosell = 1';
+	$sql .= ' AND entity IN ('.implode(',', array_map('intval', $entities)).')';
+	$sql .= ' ORDER BY ref ASC, label ASC';
+
+	$options = array();
+	$resql = $db->query($sql);
+	if (!$resql) {
+		return $options;
+	}
+
+	while ($obj = $db->fetch_object($resql)) {
+		$label = $obj->ref;
+		if (!empty($obj->label)) {
+			$label .= ' - '.$obj->label;
+		}
+		if ((int) $obj->entity !== (int) $conf->entity) {
+			$label .= ' (entity '.$obj->entity.')';
+		}
+		$options[] = array(
+			'ref' => (string) $obj->ref,
+			'label' => $label,
+		);
+	}
+
+	return $options;
+}
+
+/**
+ * Print a select2 service selector.
+ *
+ * @param string $key Settings key
+ * @param string $value Current product ref
+ * @param array<int,array<string,string>> $options Service options
+ * @return string
+ */
+function lmdbwebsite_admin_print_service_select($key, $value, $options)
+{
+	global $langs;
+
+	$html = '<select class="flat minwidth300 maxwidth500" name="'.dol_escape_htmltag($key).'" id="'.dol_escape_htmltag($key).'">';
+	$html .= '<option value=""></option>';
+	$found = $value === '';
+	foreach ($options as $option) {
+		$selected = ((string) $option['ref'] === (string) $value) ? ' selected="selected"' : '';
+		if ($selected !== '') {
+			$found = true;
+		}
+		$html .= '<option value="'.dol_escape_htmltag($option['ref']).'"'.$selected.'>'.dol_escape_htmltag($option['label']).'</option>';
+	}
+	if (!$found) {
+		$html .= '<option value="'.dol_escape_htmltag($value).'" selected="selected">'.dol_escape_htmltag($langs->trans('LmdbwebsiteServiceNotFound', $value)).'</option>';
+	}
+	$html .= '</select>';
+	if (function_exists('ajax_combobox')) {
+		$html .= ajax_combobox($key);
+	}
+
+	return $html;
+}

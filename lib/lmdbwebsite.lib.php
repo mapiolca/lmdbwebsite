@@ -50,7 +50,14 @@ function lmdbwebsite_get_conf($key, $default = '')
  */
 function lmdbwebsite_public_url($path, $params = array())
 {
-	$base = rtrim(lmdbwebsite_get_conf('SITE_URL', getDolGlobalString('MAIN_URL_ROOT', '')), '/');
+	$base = trim(lmdbwebsite_get_conf('DOLIBARR_URL', ''));
+	if ($base === '') {
+		$base = trim(getDolGlobalString('MAIN_URL_ROOT', ''));
+	}
+	if ($base === '') {
+		$base = trim(lmdbwebsite_get_conf('SITE_URL', ''));
+	}
+	$base = rtrim($base, '/');
 	$url = $base.'/custom/lmdbwebsite/public/'.ltrim($path, '/');
 	if (!empty($params)) {
 		$url .= '?'.http_build_query($params);
@@ -132,4 +139,3 @@ function lmdbwebsite_escape($value)
 {
 	return dol_escape_htmltag((string) $value);
 }
-
