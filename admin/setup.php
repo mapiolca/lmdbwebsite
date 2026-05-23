@@ -65,14 +65,19 @@ if ($action === 'createwebsite') {
 	$result = $installer->syncWebsite($user);
 	if (is_array($result)) {
 		$siteAction = empty($result['site_created']) ? $langs->trans('LmdbwebsiteWebsiteSynchronized') : $langs->trans('LmdbwebsiteWebsiteCreated');
-		setEventMessages($langs->trans(
+		$messages = array();
+		$messages[] = $langs->trans(
 			'LmdbwebsiteWebsiteSyncSummary',
 			$siteAction,
 			$result['pages_created'],
 			$result['pages_updated'],
-			$result['assets_copied'],
+			$result['assets_copied']
+		);
+		$messages[] = $langs->trans(
+			'LmdbwebsiteWebsiteSyncDirectory',
 			$result['target_dir']
-		), null, 'mesgs');
+		);
+		setEventMessages(null, $messages, 'mesgs');
 	} else {
 		$message = $installer->error;
 		if ($message === 'LmdbwebsiteMissingWebsiteModule') {
