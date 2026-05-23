@@ -1,0 +1,15 @@
+{
+  "name": "lmdbwebsite",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Site public Les Metiers du Batiment et module Dolibarr d'abonnement Stancer.",
+  "scripts": {
+    "build": "node scripts/build-site.mjs",
+    "check": "node scripts/check.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
+

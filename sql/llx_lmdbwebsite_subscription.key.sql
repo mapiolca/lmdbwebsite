@@ -1,0 +1,6 @@
+ALTER TABLE llx_lmdbwebsite_subscription ADD UNIQUE INDEX uk_lmdbwebsite_subscription_ref (ref, entity);
+ALTER TABLE llx_lmdbwebsite_subscription ADD INDEX idx_lmdbwebsite_subscription_status (status);
+ALTER TABLE llx_lmdbwebsite_subscription ADD INDEX idx_lmdbwebsite_subscription_stancer_payment (stancer_initial_payment_id);
+ALTER TABLE llx_lmdbwebsite_subscription ADD INDEX idx_lmdbwebsite_subscription_next_invoice (next_invoice_date, status);
+ALTER TABLE llx_lmdbwebsite_subscription ADD INDEX idx_lmdbwebsite_subscription_onboarding_token (onboarding_token);
+

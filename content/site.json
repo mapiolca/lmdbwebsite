@@ -1,0 +1,169 @@
+{
+  "site": {
+    "name": "Les Metiers du Batiment",
+    "url": "https://lesmetiersdubatiment.fr",
+    "email": "contact@lesmetiersdubatiment.fr",
+    "description": "ERP/CRM Dolibarr pense pour les artisans, entreprises du batiment et gestionnaires de chantiers.",
+    "heroImage": "https://lesmetiersdubatiment.fr/img/capture_page_accueil.png",
+    "productImage": "https://lesmetiersdubatiment.fr/img/capture_page_accueil.png"
+  },
+  "navigation": [
+    { "label": "Accueil", "href": "/" },
+    { "label": "Fonctionnement", "href": "/fonctionnement/" },
+    { "label": "Tarifs", "href": "/tarifs/" },
+    { "label": "Guides", "href": "/guides/erp-batiment/" },
+    { "label": "Contact", "href": "/contact/" }
+  ],
+  "externalLinks": {
+    "portal": "https://portail.lesmetiersdubatiment.fr/",
+    "erp": "https://erp.lesmetiersdubatiment.fr/"
+  },
+  "offers": [
+    {
+      "id": "base",
+      "name": "Base",
+      "productRef": "LMDB-BASE",
+      "monthly": 12,
+      "annual": 108,
+      "users": "1 utilisateur",
+      "summary": "Pour demarrer avec un ERP/CRM batiment simple et structure.",
+      "features": [
+        "Acces ERP/CRM",
+        "Bibliotheque produits et services",
+        "Clients et fournisseurs",
+        "Assistance par mail"
+      ]
+    },
+    {
+      "id": "standard",
+      "name": "Standard",
+      "productRef": "LMDB-STANDARD",
+      "monthly": 39,
+      "annual": 348,
+      "users": "Jusqu'a 10 utilisateurs",
+      "summary": "Pour les equipes qui veulent suivre devis, achats, projets et factures.",
+      "features": [
+        "Acces ERP/CRM",
+        "Bibliotheque produits et services",
+        "Assistance mail et telephone",
+        "15 jetons creations par mois"
+      ]
+    },
+    {
+      "id": "pro",
+      "name": "Pro",
+      "productRef": "LMDB-PRO",
+      "monthly": 129,
+      "annual": 1188,
+      "users": "Jusqu'a 30 utilisateurs",
+      "summary": "Pour piloter plusieurs chantiers, marges, achats et documents.",
+      "features": [
+        "Acces ERP/CRM",
+        "Clients et fournisseurs",
+        "Support et accompagnement prioritaire",
+        "50 jetons creations par mois"
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "id": "home",
+      "slug": "",
+      "title": "ERP CRM Dolibarr pour entreprises du batiment",
+      "description": "Les Metiers du Batiment centralise devis, clients, chantiers, produits, achats et factures dans un ERP/CRM Dolibarr adapte au terrain.",
+      "headline": "Un ERP/CRM Dolibarr pour gerer votre entreprise du batiment de A a Z",
+      "intro": "Vendez mieux, suivez vos chantiers, maitrisez vos achats et gardez vos marges sous controle avec une solution configuree pour les metiers du batiment.",
+      "cta": "Demander une demo",
+      "sections": [
+        {
+          "title": "Ce que vous pilotez",
+          "items": [
+            "Devis detailles avec bibliotheque de produits et services",
+            "Clients, fournisseurs, achats et documents centralises",
+            "Contrats, factures recurrentes et suivi de paiement",
+            "Acces au portail et a l'ERP meme hors bureau"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fonctionnement",
+      "slug": "fonctionnement",
+      "title": "Fonctionnement ERP batiment",
+      "description": "Decouvrez les fonctionnalites principales : CRM, ERP, produits, services, documents, optimisations et integrations metier.",
+      "headline": "Un fonctionnement pense pour les devis, chantiers et marges",
+      "intro": "La solution s'appuie sur Dolibarr et ajoute une configuration metier pour rendre les workflows plus utiles aux entreprises du batiment.",
+      "features": [
+        ["CRM", "Suivez prospects, clients, propositions commerciales, commandes et factures."],
+        ["ERP", "Organisez projets, achats, documents, stocks et planning autour de vos chantiers."],
+        ["Produits et services", "Exploitez une bibliotheque preconfiguree et enrichissez-la avec vos propres donnees."],
+        ["Marge", "Adaptez vos prix de vente selon vos prix d'achat reels et vos objectifs."],
+        ["Documents", "Centralisez devis, factures, contrats et pieces utiles aux dossiers."],
+        ["Communaute", "Partagez et evaluez produits, services et fournisseurs avec les autres utilisateurs."]
+      ]
+    },
+    {
+      "id": "tarifs",
+      "slug": "tarifs",
+      "title": "Tarifs ERP CRM batiment",
+      "description": "Choisissez une offre Base, Standard ou Pro, puis lancez un abonnement Dolibarr avec paiement carte Stancer.",
+      "headline": "Des offres claires, un abonnement sans PayPal",
+      "intro": "Choisissez l'offre, la frequence et le mode de reglement. Dolibarr cree le tiers, le contrat, la facture modele et la premiere facture."
+    },
+    {
+      "id": "contact",
+      "slug": "contact",
+      "title": "Contact et demonstration",
+      "description": "Contactez Les Metiers du Batiment pour une demonstration, une question d'abonnement ou une offre sur mesure.",
+      "headline": "Parlons de votre organisation",
+      "intro": "Une question, une demande de demo ou une offre sur mesure ? Envoyez un message et nous revenons vers vous rapidement."
+    },
+    {
+      "id": "mentions-legales",
+      "slug": "mentions-legales",
+      "title": "Mentions legales",
+      "description": "Mentions legales, editeur, hebergement et informations RGPD du site Les Metiers du Batiment.",
+      "headline": "Mentions legales",
+      "intro": "Ce site est edite et maintenu par EI Les Metiers du Batiment."
+    }
+  ],
+  "guides": [
+    {
+      "slug": "guides/erp-batiment",
+      "title": "ERP batiment : pourquoi partir d'un socle Dolibarr",
+      "description": "Un guide court pour comprendre l'interet d'un ERP batiment base sur Dolibarr.",
+      "headline": "ERP batiment : partir d'un socle robuste, puis l'adapter au terrain",
+      "intro": "Un ERP utile aux artisans et PME du batiment doit rester simple a utiliser tout en structurant les devis, achats, chantiers et factures.",
+      "body": [
+        "Dolibarr apporte les briques essentielles : tiers, produits, devis, commandes, factures, contrats et documents.",
+        "La valeur metier vient ensuite de la configuration : bibliotheque produits, modeles de documents, workflows chantier et suivi des marges.",
+        "Cette approche evite de repartir de zero et garde les donnees dans un outil durable, ouvert et extensible."
+      ]
+    },
+    {
+      "slug": "guides/devis-batiment",
+      "title": "Devis batiment : gagner du temps sans perdre le detail",
+      "description": "Comment mieux structurer les devis batiment avec produits, services et prix d'achat.",
+      "headline": "Des devis plus rapides, plus detailles et plus defendables",
+      "intro": "Un devis batiment efficace doit etre lisible pour le client et exploitable pour suivre la marge.",
+      "body": [
+        "Une bibliotheque produits/services evite les saisies repetitives et limite les oublis.",
+        "Les prix d'achat et prix de vente doivent rester relies pour suivre la marge reelle.",
+        "Le devis devient alors un point de depart propre pour la commande, le chantier et la facturation."
+      ]
+    },
+    {
+      "slug": "guides/gestion-chantier",
+      "title": "Gestion de chantier : centraliser les informations utiles",
+      "description": "Pourquoi centraliser documents, clients, fournisseurs et achats pour mieux piloter les chantiers.",
+      "headline": "Centraliser les informations pour mieux piloter chaque chantier",
+      "intro": "Quand les informations sont dispersees, les marges, delais et responsabilites deviennent plus difficiles a suivre.",
+      "body": [
+        "Un dossier chantier doit regrouper les documents, contacts, achats, devis, factures et notes internes.",
+        "La centralisation facilite les relances, la preparation des factures et le suivi des ecarts.",
+        "Le bon outil n'ajoute pas du travail administratif : il rend le travail existant plus fiable."
+      ]
+    }
+  ]
+}
+
