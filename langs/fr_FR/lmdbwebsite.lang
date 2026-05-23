@@ -22,6 +22,7 @@ LmdbwebsiteWebsiteButtonHelp=Copie les ressources embarquees dans documents/webs
 LmdbwebsiteWebsiteCreated=cree
 LmdbwebsiteWebsiteSynchronized=synchronise
 LmdbwebsiteWebsiteSyncSummary=Site web %s : %s page(s) creee(s), %s page(s) mise(s) a jour, %s fichier(s) asset synchronise(s). Repertoire : %s
+LmdbwebsiteWebsiteParentDirectoryNotWritable=Le repertoire parent du site web n'est pas accessible en ecriture : %s
 LmdbwebsiteMissingWebsiteModule=Le module Site Web doit etre installe et active
 LmdbwebsitePublicSubscribe=Tunnel d'abonnement
 LmdbwebsiteReconcilePayments=LMDB Website - reconciliation paiements

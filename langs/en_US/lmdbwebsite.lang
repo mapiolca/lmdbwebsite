@@ -22,6 +22,7 @@ LmdbwebsiteWebsiteButtonHelp=Copies bundled resources into documents/website/lmd
 LmdbwebsiteWebsiteCreated=created
 LmdbwebsiteWebsiteSynchronized=synchronized
 LmdbwebsiteWebsiteSyncSummary=Website %s: %s page(s) created, %s page(s) updated, %s asset file(s) synchronized. Directory: %s
+LmdbwebsiteWebsiteParentDirectoryNotWritable=The website parent directory is not writable: %s
 LmdbwebsiteMissingWebsiteModule=The Website module must be installed and enabled
 LmdbwebsitePublicSubscribe=Subscription funnel
 LmdbwebsiteReconcilePayments=LMDB Website - reconcile payments

@@ -54,7 +54,7 @@ class LmdbwebsiteInstaller
 	 */
 	public function syncWebsite(User $user)
 	{
-		global $conf;
+		global $conf, $langs;
 
 		if (empty($conf->website) || empty($conf->website->enabled)) {
 			return $this->fail('LmdbwebsiteMissingWebsiteModule');
@@ -73,6 +73,12 @@ class LmdbwebsiteInstaller
 			'home_set' => 0,
 			'target_dir' => $this->getTargetDir(),
 		);
+
+		$websiteBaseDir = dirname($summary['target_dir']);
+		if (!dol_mkdir($websiteBaseDir) || !is_writable($websiteBaseDir)) {
+			$message = is_object($langs) ? $langs->trans('LmdbwebsiteWebsiteParentDirectoryNotWritable', $websiteBaseDir) : 'Website parent directory is not writable: '.$websiteBaseDir;
+			return $this->fail($message);
+		}
 
 		$website = $this->createOrUpdateWebsite($user, $summary);
 		if (!is_object($website) || empty($website->id)) {
@@ -873,10 +879,6 @@ class LmdbwebsiteInstaller
 	private function getWebsiteOutputBase()
 	{
 		global $conf, $dolibarr_main_data_root;
-
-		if (!empty($conf->website->dir_output)) {
-			return rtrim($conf->website->dir_output, '/');
-		}
 
 		$base = empty($dolibarr_main_data_root) ? DOL_DATA_ROOT : $dolibarr_main_data_root;
 		return rtrim($base.((int) $conf->entity > 1 ? '/'.((int) $conf->entity) : '').'/website', '/');
