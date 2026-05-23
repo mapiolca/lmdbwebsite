@@ -210,11 +210,31 @@ class LmdbwebsiteInstaller
 	private function ensureWebsiteWritableDirectory($targetDir)
 	{
 		$parentDir = dirname($targetDir);
-		if (!dol_mkdir($parentDir) || !@is_dir($parentDir) || !@is_writable($parentDir)) {
-			return $this->failWebsiteDirectoryDiagnostics('LmdbwebsiteWebsiteParentDirectoryNotWritable');
+		if ($this->ensureWebsiteDirectoryReady($parentDir, 'LmdbwebsiteWebsiteParentDirectoryNotWritable') < 0) {
+			return -1;
 		}
-		if (!dol_mkdir($targetDir) || !@is_dir($targetDir) || !@is_writable($targetDir)) {
-			return $this->failWebsiteDirectoryDiagnostics('LmdbwebsiteWebsiteTargetDirectoryNotWritable');
+		if ($this->ensureWebsiteDirectoryReady($targetDir, 'LmdbwebsiteWebsiteTargetDirectoryNotWritable') < 0) {
+			return -1;
+		}
+
+		return 1;
+	}
+
+	/**
+	 * Create and validate a Website directory with diagnostic errors.
+	 *
+	 * @param string $dir Directory path
+	 * @param string $messageKey Translation key for diagnostics
+	 * @return int 1 if OK, <0 if KO
+	 */
+	private function ensureWebsiteDirectoryReady($dir, $messageKey)
+	{
+		if (!@is_dir($dir)) {
+			dol_mkdir($dir);
+			clearstatcache(true, $dir);
+		}
+		if (!@is_dir($dir) || !@is_writable($dir)) {
+			return $this->failWebsiteDirectoryDiagnostics($messageKey);
 		}
 
 		return 1;
@@ -686,8 +706,8 @@ class LmdbwebsiteInstaller
 		if (!is_dir($source)) {
 			return 0;
 		}
-		if (!dol_mkdir($target)) {
-			return $this->fail('Unable to create assets directory '.$target);
+		if ($this->ensureDirectoryExists($target, 'Unable to create assets directory') < 0) {
+			return -1;
 		}
 
 		$count = 0;
@@ -835,8 +855,8 @@ class LmdbwebsiteInstaller
 			return 0;
 		}
 
-		if (!dol_mkdir(dirname($destination))) {
-			return $this->fail('Unable to create directory '.dirname($destination));
+		if ($this->ensureDirectoryExists(dirname($destination), 'Unable to create directory') < 0) {
+			return -1;
 		}
 		if (!copy($source, $destination)) {
 			return $this->fail('Unable to copy file '.$destination);
@@ -860,8 +880,8 @@ class LmdbwebsiteInstaller
 			return 0;
 		}
 
-		if (!dol_mkdir(dirname($file))) {
-			return $this->fail('Unable to create directory '.dirname($file));
+		if ($this->ensureDirectoryExists(dirname($file), 'Unable to create directory') < 0) {
+			return -1;
 		}
 
 		if (function_exists($function)) {
@@ -882,6 +902,26 @@ class LmdbwebsiteInstaller
 		}
 
 		return $result ? 1 : $this->fail('Unable to write file '.$file);
+	}
+
+	/**
+	 * Create and validate a writable directory.
+	 *
+	 * @param string $dir Directory path
+	 * @param string $message Error message prefix
+	 * @return int 1 if OK, <0 if KO
+	 */
+	private function ensureDirectoryExists($dir, $message)
+	{
+		if (!@is_dir($dir)) {
+			dol_mkdir($dir);
+			clearstatcache(true, $dir);
+		}
+		if (!@is_dir($dir) || !@is_writable($dir)) {
+			return $this->fail($message.' '.$dir);
+		}
+
+		return 1;
 	}
 
 	/**
