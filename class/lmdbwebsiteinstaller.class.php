@@ -54,7 +54,7 @@ class LmdbwebsiteInstaller
 	 */
 	public function syncWebsite(User $user)
 	{
-		global $conf, $langs;
+		global $conf;
 
 		if (empty($conf->website) || empty($conf->website->enabled)) {
 			return $this->fail('LmdbwebsiteMissingWebsiteModule');
@@ -74,19 +74,13 @@ class LmdbwebsiteInstaller
 			'target_dir' => $this->getTargetDir(),
 		);
 
-		$websiteBaseDir = dirname($summary['target_dir']);
-		if (!dol_mkdir($websiteBaseDir) || !is_writable($websiteBaseDir)) {
-			$message = is_object($langs) ? $langs->trans('LmdbwebsiteWebsiteParentDirectoryNotWritable', $websiteBaseDir) : 'Website parent directory is not writable: '.$websiteBaseDir;
-			return $this->fail($message);
+		if ($this->ensureWebsiteWritableDirectory($summary['target_dir']) < 0) {
+			return -1;
 		}
 
 		$website = $this->createOrUpdateWebsite($user, $summary);
 		if (!is_object($website) || empty($website->id)) {
 			return -1;
-		}
-
-		if (!dol_mkdir($summary['target_dir'])) {
-			return $this->fail('Unable to create website directory '.$summary['target_dir']);
 		}
 
 		$assetsResult = $this->syncAssets($resourceDir.'/assets', $summary['target_dir'].'/assets');
@@ -167,6 +161,37 @@ class LmdbwebsiteInstaller
 	}
 
 	/**
+	 * Return filesystem diagnostics for the managed Website directory.
+	 *
+	 * @return array<string,mixed>
+	 */
+	public function getWebsiteDirectoryDiagnostics()
+	{
+		global $conf, $dolibarr_main_data_root;
+
+		$targetDir = $this->getTargetDir();
+		$parentDir = dirname($targetDir);
+		$closestExistingParent = $this->findClosestExistingParent($parentDir);
+		$openBaseDir = ini_get('open_basedir');
+
+		return array(
+			'target_dir' => $targetDir,
+			'target_exists' => @is_dir($targetDir) ? 1 : 0,
+			'target_writable' => (@is_dir($targetDir) && @is_writable($targetDir)) ? 1 : 0,
+			'parent_dir' => $parentDir,
+			'parent_exists' => @is_dir($parentDir) ? 1 : 0,
+			'parent_writable' => (@is_dir($parentDir) && @is_writable($parentDir)) ? 1 : 0,
+			'closest_existing_parent' => $closestExistingParent,
+			'closest_existing_parent_writable' => ($closestExistingParent !== '' && @is_writable($closestExistingParent)) ? 1 : 0,
+			'dolibarr_main_data_root' => empty($dolibarr_main_data_root) ? '' : (string) $dolibarr_main_data_root,
+			'dol_data_root' => defined('DOL_DATA_ROOT') ? DOL_DATA_ROOT : '',
+			'website_dir_output' => empty($conf->website->dir_output) ? '' : (string) $conf->website->dir_output,
+			'lmdbwebsite_dir_output' => empty($conf->lmdbwebsite->dir_output) ? '' : (string) $conf->lmdbwebsite->dir_output,
+			'open_basedir' => empty($openBaseDir) ? '' : (string) $openBaseDir,
+		);
+	}
+
+	/**
 	 * Get target Website directory.
 	 *
 	 * @return string
@@ -174,6 +199,99 @@ class LmdbwebsiteInstaller
 	public function getTargetDir()
 	{
 		return $this->getWebsiteOutputBase().'/'.self::WEBSITE_REF;
+	}
+
+	/**
+	 * Create and validate writable Website directories.
+	 *
+	 * @param string $targetDir Target directory
+	 * @return int 1 if OK, <0 if KO
+	 */
+	private function ensureWebsiteWritableDirectory($targetDir)
+	{
+		$parentDir = dirname($targetDir);
+		if (!dol_mkdir($parentDir) || !@is_dir($parentDir) || !@is_writable($parentDir)) {
+			return $this->failWebsiteDirectoryDiagnostics('LmdbwebsiteWebsiteParentDirectoryNotWritable');
+		}
+		if (!dol_mkdir($targetDir) || !@is_dir($targetDir) || !@is_writable($targetDir)) {
+			return $this->failWebsiteDirectoryDiagnostics('LmdbwebsiteWebsiteTargetDirectoryNotWritable');
+		}
+
+		return 1;
+	}
+
+	/**
+	 * Register a directory diagnostic error.
+	 *
+	 * @param string $messageKey Translation key
+	 * @return int
+	 */
+	private function failWebsiteDirectoryDiagnostics($messageKey)
+	{
+		global $langs;
+
+		$diagnostics = $this->getWebsiteDirectoryDiagnostics();
+		$message = is_object($langs) ? $langs->trans($messageKey, $diagnostics['parent_dir']) : $messageKey;
+		if ($messageKey === 'LmdbwebsiteWebsiteTargetDirectoryNotWritable') {
+			$message = is_object($langs) ? $langs->trans($messageKey, $diagnostics['target_dir']) : $messageKey;
+		}
+
+		$this->error = $message;
+		$this->errors = $this->formatWebsiteDirectoryDiagnostics($diagnostics);
+
+		return -1;
+	}
+
+	/**
+	 * Format directory diagnostics for event messages.
+	 *
+	 * @param array<string,mixed> $diagnostics Diagnostics
+	 * @return array<int,string>
+	 */
+	private function formatWebsiteDirectoryDiagnostics($diagnostics)
+	{
+		global $langs;
+
+		$items = array(
+			'LmdbwebsiteWebsiteDiagnosticTargetDir' => $diagnostics['target_dir'],
+			'LmdbwebsiteWebsiteDiagnosticTargetExists' => $this->formatBoolean($diagnostics['target_exists']),
+			'LmdbwebsiteWebsiteDiagnosticTargetWritable' => $this->formatBoolean($diagnostics['target_writable']),
+			'LmdbwebsiteWebsiteDiagnosticParentDir' => $diagnostics['parent_dir'],
+			'LmdbwebsiteWebsiteDiagnosticParentExists' => $this->formatBoolean($diagnostics['parent_exists']),
+			'LmdbwebsiteWebsiteDiagnosticParentWritable' => $this->formatBoolean($diagnostics['parent_writable']),
+			'LmdbwebsiteWebsiteDiagnosticClosestParent' => $diagnostics['closest_existing_parent'],
+			'LmdbwebsiteWebsiteDiagnosticClosestParentWritable' => $this->formatBoolean($diagnostics['closest_existing_parent_writable']),
+			'LmdbwebsiteWebsiteDiagnosticDolibarrMainDataRoot' => $diagnostics['dolibarr_main_data_root'],
+			'LmdbwebsiteWebsiteDiagnosticDolDataRoot' => $diagnostics['dol_data_root'],
+			'LmdbwebsiteWebsiteDiagnosticWebsiteDirOutput' => $diagnostics['website_dir_output'],
+			'LmdbwebsiteWebsiteDiagnosticLmdbwebsiteDirOutput' => $diagnostics['lmdbwebsite_dir_output'],
+			'LmdbwebsiteWebsiteDiagnosticOpenBaseDir' => $diagnostics['open_basedir'],
+		);
+
+		$lines = array();
+		foreach ($items as $labelKey => $value) {
+			$label = is_object($langs) ? $langs->trans($labelKey) : $labelKey;
+			$lines[] = $label.': '.($value === '' ? '-' : $value);
+		}
+
+		return $lines;
+	}
+
+	/**
+	 * Format boolean diagnostic values.
+	 *
+	 * @param mixed $value Value
+	 * @return string
+	 */
+	private function formatBoolean($value)
+	{
+		global $langs;
+
+		if (is_object($langs)) {
+			return $langs->trans($value ? 'Yes' : 'No');
+		}
+
+		return $value ? 'yes' : 'no';
 	}
 
 	/**
@@ -878,10 +996,9 @@ class LmdbwebsiteInstaller
 	 */
 	private function getWebsiteOutputBase()
 	{
-		global $conf, $dolibarr_main_data_root;
+		global $conf;
 
-		$base = empty($dolibarr_main_data_root) ? DOL_DATA_ROOT : $dolibarr_main_data_root;
-		return rtrim($base.((int) $conf->entity > 1 ? '/'.((int) $conf->entity) : '').'/website', '/');
+		return rtrim(DOL_DATA_ROOT.((int) $conf->entity > 1 ? '/'.((int) $conf->entity) : '').'/website', '/');
 	}
 
 	/**
@@ -892,6 +1009,29 @@ class LmdbwebsiteInstaller
 	private function getResourceDir()
 	{
 		return dol_buildpath('/lmdbwebsite/resources/dolibarr-website', 0);
+	}
+
+	/**
+	 * Find the closest existing parent directory.
+	 *
+	 * @param string $path Directory path
+	 * @return string
+	 */
+	private function findClosestExistingParent($path)
+	{
+		$current = rtrim($path, '/');
+		while ($current !== '' && $current !== '.' && $current !== '/') {
+			if (@is_dir($current)) {
+				return $current;
+			}
+			$parent = dirname($current);
+			if ($parent === $current) {
+				break;
+			}
+			$current = $parent;
+		}
+
+		return @is_dir('/') ? '/' : '';
 	}
 
 	/**

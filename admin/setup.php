@@ -114,6 +114,7 @@ print '</div>';
 print '</form>';
 
 $websiteInfo = $installer->getWebsiteInfo();
+$directoryDiagnostics = $installer->getWebsiteDirectoryDiagnostics();
 $websiteStatus = $websiteInfo['found'] ? $langs->trans('LmdbwebsiteWebsiteFound', $websiteInfo['id'], $websiteInfo['pages']) : $langs->trans('LmdbwebsiteWebsiteMissing');
 $websiteStatus .= $websiteInfo['found'] ? ' - '.$langs->trans($websiteInfo['status'] ? 'LmdbwebsiteWebsitePublished' : 'LmdbwebsiteWebsiteDraft') : '';
 
@@ -123,6 +124,36 @@ print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td>'.$langs->trans('Parameter').'</td><td>'.$langs->trans('Value').'</td></tr>';
 print '<tr class="oddeven"><td>'.$langs->trans('LmdbwebsiteWebsiteTargetPath').'</td><td>'.dol_escape_htmltag($websiteInfo['target_dir']).'</td></tr>';
 print '<tr class="oddeven"><td>'.$langs->trans('LmdbwebsiteWebsiteCurrentStatus').'</td><td>'.dol_escape_htmltag($websiteStatus).'</td></tr>';
+print '</table>';
+
+print '<br>';
+print load_fiche_titre($langs->trans('LmdbwebsiteWebsiteDirectoryDiagnostic'), '', 'folder-open');
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre"><td>'.$langs->trans('Parameter').'</td><td>'.$langs->trans('Value').'</td></tr>';
+$diagnosticRows = array(
+	array('LmdbwebsiteWebsiteDiagnosticTargetDir', 'target_dir', 'text'),
+	array('LmdbwebsiteWebsiteDiagnosticTargetExists', 'target_exists', 'bool'),
+	array('LmdbwebsiteWebsiteDiagnosticTargetWritable', 'target_writable', 'bool'),
+	array('LmdbwebsiteWebsiteDiagnosticParentDir', 'parent_dir', 'text'),
+	array('LmdbwebsiteWebsiteDiagnosticParentExists', 'parent_exists', 'bool'),
+	array('LmdbwebsiteWebsiteDiagnosticParentWritable', 'parent_writable', 'bool'),
+	array('LmdbwebsiteWebsiteDiagnosticClosestParent', 'closest_existing_parent', 'text'),
+	array('LmdbwebsiteWebsiteDiagnosticClosestParentWritable', 'closest_existing_parent_writable', 'bool'),
+	array('LmdbwebsiteWebsiteDiagnosticDolibarrMainDataRoot', 'dolibarr_main_data_root', 'text'),
+	array('LmdbwebsiteWebsiteDiagnosticDolDataRoot', 'dol_data_root', 'text'),
+	array('LmdbwebsiteWebsiteDiagnosticWebsiteDirOutput', 'website_dir_output', 'text'),
+	array('LmdbwebsiteWebsiteDiagnosticLmdbwebsiteDirOutput', 'lmdbwebsite_dir_output', 'text'),
+	array('LmdbwebsiteWebsiteDiagnosticOpenBaseDir', 'open_basedir', 'text'),
+);
+foreach ($diagnosticRows as $row) {
+	$value = isset($directoryDiagnostics[$row[1]]) ? $directoryDiagnostics[$row[1]] : '';
+	if ($row[2] === 'bool') {
+		$value = $langs->trans($value ? 'Yes' : 'No');
+	} elseif ($value === '') {
+		$value = '-';
+	}
+	print '<tr class="oddeven"><td>'.$langs->trans($row[0]).'</td><td>'.dol_escape_htmltag((string) $value).'</td></tr>';
+}
 print '</table>';
 
 if (!$websiteInfo['website_enabled']) {
