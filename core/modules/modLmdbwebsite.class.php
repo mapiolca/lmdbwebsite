@@ -73,14 +73,15 @@ class modLmdbwebsite extends DolibarrModules
 		$this->const = array(
 			1 => array('LMDBWEBSITE_SITE_URL', 'chaine', 'https://lesmetiersdubatiment.fr', 'Public website URL', 1, 'current', 0),
 			2 => array('LMDBWEBSITE_DOLIBARR_URL', 'chaine', '', 'Public Dolibarr URL for module endpoints', 1, 'current', 0),
-			3 => array('LMDBWEBSITE_PRODUCT_REF_BASE', 'chaine', 'LMDB-BASE', 'Base offer product ref', 1, 'current', 0),
-			4 => array('LMDBWEBSITE_PRODUCT_REF_STANDARD', 'chaine', 'LMDB-STANDARD', 'Standard offer product ref', 1, 'current', 0),
-			5 => array('LMDBWEBSITE_PRODUCT_REF_PRO', 'chaine', 'LMDB-PRO', 'Pro offer product ref', 1, 'current', 0),
-			6 => array('LMDBWEBSITE_PRODUCT_REF_BASE_ANNUAL', 'chaine', '', 'Optional annual Base offer product ref', 1, 'current', 0),
-			7 => array('LMDBWEBSITE_PRODUCT_REF_STANDARD_ANNUAL', 'chaine', '', 'Optional annual Standard offer product ref', 1, 'current', 0),
-			8 => array('LMDBWEBSITE_PRODUCT_REF_PRO_ANNUAL', 'chaine', '', 'Optional annual Pro offer product ref', 1, 'current', 0),
-			9 => array('LMDBWEBSITE_USER_ID', 'chaine', '1', 'Technical user id', 1, 'current', 0),
-			10 => array('LMDBWEBSITE_BANK_ACCOUNT_ID', 'chaine', '', 'Bank account for payments', 1, 'current', 0),
+			3 => array('LMDBWEBSITE_CONTACT_DOLIBARR_URL', 'chaine', '', 'Public Dolibarr URL for contact endpoint', 1, 'current', 0),
+			4 => array('LMDBWEBSITE_PRODUCT_REF_BASE', 'chaine', 'LMDB-BASE', 'Base offer product ref', 1, 'current', 0),
+			5 => array('LMDBWEBSITE_PRODUCT_REF_STANDARD', 'chaine', 'LMDB-STANDARD', 'Standard offer product ref', 1, 'current', 0),
+			6 => array('LMDBWEBSITE_PRODUCT_REF_PRO', 'chaine', 'LMDB-PRO', 'Pro offer product ref', 1, 'current', 0),
+			7 => array('LMDBWEBSITE_PRODUCT_REF_BASE_ANNUAL', 'chaine', '', 'Optional annual Base offer product ref', 1, 'current', 0),
+			8 => array('LMDBWEBSITE_PRODUCT_REF_STANDARD_ANNUAL', 'chaine', '', 'Optional annual Standard offer product ref', 1, 'current', 0),
+			9 => array('LMDBWEBSITE_PRODUCT_REF_PRO_ANNUAL', 'chaine', '', 'Optional annual Pro offer product ref', 1, 'current', 0),
+			10 => array('LMDBWEBSITE_USER_ID', 'chaine', '1', 'Technical user id', 1, 'current', 0),
+			11 => array('LMDBWEBSITE_BANK_ACCOUNT_ID', 'chaine', '', 'Bank account for payments', 1, 'current', 0),
 		);
 
 		if (!isset($conf->lmdbwebsite) || !isset($conf->lmdbwebsite->enabled)) {

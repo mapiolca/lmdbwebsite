@@ -89,8 +89,19 @@ function lmdbwebsite_public_offer($offerId)
  */
 function lmdbwebsite_public_header($title, $description = '')
 {
+	global $mysoc;
+
 	$content = lmdbwebsite_public_content();
 	$name = empty($content['site']['name']) ? 'Les Metiers du Batiment' : $content['site']['name'];
+	$moduleLogo = dol_buildpath('/lmdbwebsite/public/assets/logo.png', 1);
+	$favicon = dol_buildpath('/lmdbwebsite/public/assets/favicon.png', 1);
+	$logoUrl = $moduleLogo;
+	$faviconUrl = $favicon;
+	if (is_object($mysoc) && !empty($mysoc->logo)) {
+		$logoUrl = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&file='.urlencode($mysoc->logo);
+		$faviconUrl = $logoUrl;
+	}
+	header_remove('X-Frame-Options');
 	header('Content-Type: text/html; charset=UTF-8');
 	print '<!doctype html><html lang="fr"><head><meta charset="utf-8">';
 	print '<meta name="viewport" content="width=device-width, initial-scale=1">';
@@ -99,8 +110,9 @@ function lmdbwebsite_public_header($title, $description = '')
 		print '<meta name="description" content="'.lmdbwebsite_escape($description).'">';
 	}
 	print '<meta name="robots" content="noindex,follow">';
+	print '<link rel="icon" href="'.lmdbwebsite_escape($faviconUrl).'">';
 	print '<link rel="stylesheet" href="'.dol_buildpath('/lmdbwebsite/public/assets/public.css', 1).'">';
-	print '</head><body><main class="lmdb-public"><a class="brand" href="/">LMDB</a>';
+	print '</head><body><main class="lmdb-public"><a class="brand" href="'.lmdbwebsite_escape(getDolGlobalString('MAIN_URL_ROOT', '/')).'"><img src="'.lmdbwebsite_escape($logoUrl).'" alt="'.lmdbwebsite_escape($name).'"></a>';
 }
 
 /**

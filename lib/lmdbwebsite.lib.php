@@ -66,6 +66,33 @@ function lmdbwebsite_public_url($path, $params = array())
 }
 
 /**
+ * Build an absolute public contact endpoint URL.
+ *
+ * @param string $path Relative public path
+ * @param array<string,string> $params Query params
+ * @return string
+ */
+function lmdbwebsite_contact_public_url($path, $params = array())
+{
+	$base = trim(lmdbwebsite_get_conf('CONTACT_DOLIBARR_URL', ''));
+	if ($base === '') {
+		$base = trim(lmdbwebsite_get_conf('DOLIBARR_URL', ''));
+	}
+	if ($base === '') {
+		$base = trim(getDolGlobalString('MAIN_URL_ROOT', ''));
+	}
+	if ($base === '') {
+		$base = trim(lmdbwebsite_get_conf('SITE_URL', ''));
+	}
+	$base = rtrim($base, '/');
+	$url = $base.'/custom/lmdbwebsite/public/'.ltrim($path, '/');
+	if (!empty($params)) {
+		$url .= '?'.http_build_query($params);
+	}
+	return $url;
+}
+
+/**
  * Create a per-session CSRF token for public forms.
  *
  * @return string

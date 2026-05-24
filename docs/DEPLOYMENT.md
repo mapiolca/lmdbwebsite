@@ -12,7 +12,10 @@
    - `/`
    - `/fonctionnement/`
    - `/tarifs/`
+   - `/guides/`
+   - `/modules/`
    - `/contact/`
+   - `/conditions-generales/`
    - `/mentions-legales/`
 
 Le bouton est idempotent : il met a jour les pages gerees par `lmdbwebsite`, garde les pages manuelles intactes, et cree les nouvelles pages en brouillon.
@@ -25,6 +28,7 @@ Le bouton est idempotent : il met a jour les pages gerees par `lmdbwebsite`, gar
 4. Renseigner la configuration du module :
    - `LMDBWEBSITE_SITE_URL`
    - `LMDBWEBSITE_DOLIBARR_URL`
+   - `LMDBWEBSITE_CONTACT_DOLIBARR_URL` si le formulaire contact public doit utiliser un domaine Dolibarr separe
    - `LMDBWEBSITE_PRODUCT_REF_BASE`
    - `LMDBWEBSITE_PRODUCT_REF_STANDARD`
    - `LMDBWEBSITE_PRODUCT_REF_PRO`
@@ -38,7 +42,13 @@ Le bouton est idempotent : il met a jour les pages gerees par `lmdbwebsite`, gar
    - reconciliation des paiements Stancer ;
    - generation des echeances recurrentes.
 
-Si le site Website utilise un virtualhost separe, `LMDBWEBSITE_SITE_URL` doit pointer vers ce site et `LMDBWEBSITE_DOLIBARR_URL` vers l'URL publique de Dolibarr. Apres modification d'une de ces URL, relancer **Creer le site web** pour resynchroniser les liens d'abonnement.
+Si le site Website utilise un virtualhost separe, `LMDBWEBSITE_SITE_URL` doit pointer vers ce site et `LMDBWEBSITE_DOLIBARR_URL` vers l'URL publique de Dolibarr. Le formulaire de contact utilise `LMDBWEBSITE_CONTACT_DOLIBARR_URL`, puis `LMDBWEBSITE_DOLIBARR_URL`, puis `MAIN_URL_ROOT` en fallback. Apres modification d'une de ces URL, relancer **Creer le site web** pour resynchroniser les liens d'abonnement et de contact.
+
+Les images synchronisees dans `documents/website/lmdbwebsite/assets/img` sont forcees en permissions `0644` par l'installateur du module, y compris lorsque le fichier existe deja et que son contenu est identique.
+
+## Formulaire contact
+
+La page `/contact/` embarque le formulaire public Dolibarr `/custom/lmdbwebsite/public/contact.php`. A l'envoi, le module valide les champs obligatoires, applique CSRF, honeypot et rate limit, puis cree ou reutilise un tiers prospect, cree un contact et ajoute une action interne "Demande de contact site web" pour l'utilisateur technique configure.
 
 ## Parcours de test Stancer
 

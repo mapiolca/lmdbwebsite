@@ -5,19 +5,25 @@
     "email": "contact@lesmetiersdubatiment.fr",
     "description": "ERP/CRM Dolibarr pense pour les artisans, entreprises du batiment et gestionnaires de chantiers.",
     "logoImage": "/assets/img/mediumsmall-res.png",
+    "faviconImage": "/assets/img/favicon.png",
     "heroImage": "/assets/img/capture-page-accueil.png",
-    "productImage": "/assets/img/capture-page-accueil.png"
+    "productImage": "/assets/img/capture-page-accueil.png",
+    "contactEndpoint": "/custom/lmdbwebsite/public/contact.php"
   },
   "navigation": [
     { "label": "Accueil", "href": "/" },
     { "label": "Fonctionnement", "href": "/fonctionnement/" },
     { "label": "Tarifs", "href": "/tarifs/" },
-    { "label": "Guides", "href": "/guides/erp-batiment/" },
+    { "label": "Guides", "href": "/guides/" },
+    { "label": "Nos modules", "href": "/modules/" },
     { "label": "Contact", "href": "/contact/" }
   ],
   "externalLinks": {
     "portal": "https://portail.lesmetiersdubatiment.fr/",
-    "erp": "https://erp.lesmetiersdubatiment.fr/"
+    "erp": "https://erp.lesmetiersdubatiment.fr/",
+    "dolistore": "https://www.dolistore.com/index.php?l=fr",
+    "dolibarrForumFr": "https://www.dolibarr.fr/forum/",
+    "dolibarrYoutube": "https://www.youtube.com/playlist?list=PL8z093C9OYl1Ew05YkFUPf9SfzJFQuyaN"
   },
   "integrations": [
     { "name": "Stancer", "image": "/assets/img/stancer.png" },
@@ -25,7 +31,9 @@
     { "name": "Dropbox", "image": "/assets/img/dropbox.png" },
     { "name": "Google", "image": "/assets/img/google.jpeg" },
     { "name": "SocieteInfo", "image": "/assets/img/societeinfo.png" },
-    { "name": "Stripe", "image": "/assets/img/stripe.png" }
+    { "name": "Stripe", "image": "/assets/img/stripe.png" },
+    { "name": "DoliStore", "image": "/assets/img/dolistore-squarred.png" },
+    { "name": "Multicompany", "image": "/assets/img/multicompany.png" }
   ],
   "offers": [
     {
@@ -87,10 +95,22 @@
         {
           "title": "Ce que vous pilotez",
           "items": [
-            "Devis detailles avec bibliotheque de produits et services",
-            "Clients, fournisseurs, achats et documents centralises",
-            "Contrats, factures recurrentes et suivi de paiement",
-            "Acces au portail et a l'ERP meme hors bureau"
+            {
+              "title": "Devis detailles",
+              "text": "Structurez vos lots, ouvrages, produits et services pour produire des devis lisibles, reutilisables et relies a vos marges."
+            },
+            {
+              "title": "Tiers et documents",
+              "text": "Retrouvez clients, fournisseurs, contacts, pieces administratives et historiques au meme endroit pour limiter les ressaisies."
+            },
+            {
+              "title": "Contrats et factures",
+              "text": "Transformez les engagements en factures, suivez les paiements et preparez la recurrence sans perdre le lien avec le dossier client."
+            },
+            {
+              "title": "Bureau et terrain",
+              "text": "Donnez aux equipes un acces web coherent aux informations utiles, sur ordinateur comme en mobilite."
+            }
           ]
         }
       ]
@@ -99,16 +119,27 @@
       "id": "fonctionnement",
       "slug": "fonctionnement",
       "title": "Fonctionnement ERP batiment",
-      "description": "Decouvrez les fonctionnalites principales : CRM, ERP, produits, services, documents, optimisations et integrations metier.",
-      "headline": "Un fonctionnement pense pour les devis, chantiers et marges",
-      "intro": "La solution s'appuie sur Dolibarr et ajoute une configuration metier pour rendre les workflows plus utiles aux entreprises du batiment.",
+      "description": "Decouvrez comment Les Metiers du Batiment s'appuie sur Dolibarr pour structurer CRM, devis, projets, achats, facturation et integrations.",
+      "headline": "Un socle Dolibarr libre, configure pour vos usages terrain",
+      "intro": "La solution part du coeur ERP/CRM Dolibarr, active les modules utiles, puis ajoute des reglages et modules metier pour les entreprises du batiment.",
+      "platform": [
+        ["Open source", "Vous gardez un socle durable, extensible et documente, sans enfermer vos donnees dans un outil proprietaire."],
+        ["Modules activables", "CRM, devis, factures, projets, stocks, RH ou contrats : les briques sont activees selon votre organisation."],
+        ["Accompagnement LMDB", "Les ecrans, modeles, produits, workflows et modules sont ajustes pour servir vos chantiers et vos equipes."]
+      ],
       "features": [
-        ["CRM", "Suivez prospects, clients, propositions commerciales, commandes et factures."],
-        ["ERP", "Organisez projets, achats, documents, stocks et planning autour de vos chantiers."],
-        ["Produits et services", "Exploitez une bibliotheque preconfiguree et enrichissez-la avec vos propres donnees."],
-        ["Marge", "Adaptez vos prix de vente selon vos prix d'achat reels et vos objectifs."],
-        ["Documents", "Centralisez devis, factures, contrats et pieces utiles aux dossiers."],
-        ["Communaute", "Partagez et evaluez produits, services et fournisseurs avec les autres utilisateurs."]
+        ["CRM et ventes", "Prospects, clients, opportunites, devis, commandes, contrats et relances restent connectes dans le meme flux."],
+        ["Projets et chantiers", "Chaque dossier peut regrouper taches, documents, contacts, achats, temps passes et informations techniques."],
+        ["Produits, services et stocks", "Votre bibliotheque devient exploitable pour chiffrer, commander, suivre les besoins et mieux preparer les dossiers."],
+        ["Finance et facturation", "Factures, acomptes, paiements, banques et rapprochements gardent une lecture claire de l'activite."],
+        ["Integrations", "Paiement, donnees tiers, stockage documentaire et modules externes completent Dolibarr sans multiplier les outils."],
+        ["Multi-entites", "Les usages multicompany peuvent etre prepares pour separer ou mutualiser les donnees selon votre structure."]
+      ],
+      "workflow": [
+        ["Cadrer", "Identifier vos offres, circuits de validation, documents et donnees indispensables."],
+        ["Configurer", "Activer Dolibarr, les modules et les modeles utiles a votre maniere de travailler."],
+        ["Exploiter", "Former les utilisateurs, ajuster les ecrans et suivre les premieres donnees produites."],
+        ["Ameliorer", "Ajouter progressivement automatisations, modules et integrations lorsque le socle est stable."]
       ]
     },
     {
@@ -117,7 +148,26 @@
       "title": "Tarifs ERP CRM batiment",
       "description": "Choisissez une offre Base, Standard ou Pro, puis lancez un abonnement Dolibarr avec paiement carte Stancer.",
       "headline": "Des offres claires, un abonnement sans PayPal",
-      "intro": "Choisissez l'offre, la frequence et le mode de reglement. Dolibarr cree le tiers, le contrat, la facture modele et la premiere facture."
+      "intro": "Choisissez l'offre, la frequence et le mode de reglement. Dolibarr cree le tiers, le contrat, la facture modele et la premiere facture.",
+      "cta": "Choisir une offre"
+    },
+    {
+      "id": "guides",
+      "slug": "guides",
+      "title": "Guides et tutoriels Dolibarr",
+      "description": "Tutoriels video officiels Dolibarr et ressources communautaires pour prendre en main les fonctionnalites principales.",
+      "headline": "Guides Dolibarr et tutoriels video officiels",
+      "intro": "Dolibarr s'appuie sur une communaute active, une place de marche, un forum francophone et des tutoriels video pour aider les utilisateurs a progresser.",
+      "cta": "Voir la playlist"
+    },
+    {
+      "id": "modules",
+      "slug": "modules",
+      "title": "Nos modules Dolibarr",
+      "description": "Modules Dolibarr proposes par Les Metiers du Batiment et disponibles sur le DoliStore.",
+      "headline": "Nos modules Dolibarr pour aller plus loin",
+      "intro": "Retrouvez les modules publies par Les Metiers du Batiment et les liens vers le DoliStore officiel.",
+      "cta": "Nous contacter"
     },
     {
       "id": "contact",
@@ -125,7 +175,16 @@
       "title": "Contact et demonstration",
       "description": "Contactez Les Metiers du Batiment pour une demonstration, une question d'abonnement ou une offre sur mesure.",
       "headline": "Parlons de votre organisation",
-      "intro": "Une question, une demande de demo ou une offre sur mesure ? Envoyez un message et nous revenons vers vous rapidement."
+      "intro": "Une question, une demande de demo ou une offre sur mesure ? Remplissez le formulaire et nous revenons vers vous rapidement."
+    },
+    {
+      "id": "conditions-generales",
+      "slug": "conditions-generales",
+      "title": "Conditions generales",
+      "description": "Consultez les conditions generales applicables aux services Les Metiers du Batiment et aux services tiers utilises.",
+      "headline": "Conditions generales",
+      "intro": "Cette page regroupe les liens utiles pour consulter les conditions des services et places de marche associes.",
+      "cta": "Nous contacter"
     },
     {
       "id": "mentions-legales",
@@ -134,6 +193,87 @@
       "description": "Mentions legales, editeur, hebergement et informations RGPD du site Les Metiers du Batiment.",
       "headline": "Mentions legales",
       "intro": "Ce site est edite et maintenu par EI Les Metiers du Batiment."
+    }
+  ],
+  "communityLinks": [
+    {
+      "title": "DoliStore",
+      "text": "La place de marche officielle des modules, themes et services Dolibarr.",
+      "href": "https://www.dolistore.com/index.php?l=fr"
+    },
+    {
+      "title": "Forum FR Dolibarr",
+      "text": "Un espace d'echange francophone pour les questions d'usage, de configuration et de developpement.",
+      "href": "https://www.dolibarr.fr/forum/"
+    },
+    {
+      "title": "Tutoriels YouTube",
+      "text": "La playlist officielle des tutoriels video Dolibarr en francais.",
+      "href": "https://www.youtube.com/playlist?list=PL8z093C9OYl1Ew05YkFUPf9SfzJFQuyaN"
+    }
+  ],
+  "tutorials": [
+    { "title": "Utilisateurs, groupes et permissions", "text": "Comprendre les comptes, groupes, droits et acces par profil.", "href": "https://www.youtube.com/playlist?list=PL8z093C9OYl1Ew05YkFUPf9SfzJFQuyaN&index=1" },
+    { "title": "Notes de frais", "text": "Declarer, suivre et valider les notes de frais dans Dolibarr.", "href": "https://www.youtube.com/playlist?list=PL8z093C9OYl1Ew05YkFUPf9SfzJFQuyaN&index=2" },
+    { "title": "Conges", "text": "Saisir et piloter les demandes de conges des utilisateurs.", "href": "https://www.youtube.com/playlist?list=PL8z093C9OYl1Ew05YkFUPf9SfzJFQuyaN&index=3" },
+    { "title": "Tiers", "text": "Gerer prospects, clients, fournisseurs et contacts associes.", "href": "https://www.youtube.com/playlist?list=PL8z093C9OYl1Ew05YkFUPf9SfzJFQuyaN&index=4" },
+    { "title": "Produits et services", "text": "Construire un catalogue utilisable dans les ventes, achats et stocks.", "href": "https://www.youtube.com/playlist?list=PL8z093C9OYl1Ew05YkFUPf9SfzJFQuyaN&index=5" },
+    { "title": "Propales et devis", "text": "Creer et suivre les propositions commerciales jusqu'a acceptation.", "href": "https://www.youtube.com/playlist?list=PL8z093C9OYl1Ew05YkFUPf9SfzJFQuyaN&index=6" },
+    { "title": "Commandes clients", "text": "Transformer les devis et suivre les commandes de vos clients.", "href": "https://www.youtube.com/playlist?list=PL8z093C9OYl1Ew05YkFUPf9SfzJFQuyaN&index=7" },
+    { "title": "Contrats et abonnements", "text": "Gerer les services, contrats et abonnements recurrents.", "href": "https://www.youtube.com/playlist?list=PL8z093C9OYl1Ew05YkFUPf9SfzJFQuyaN&index=8" },
+    { "title": "Factures clients", "text": "Emettre les factures, acomptes, avoirs et suivre les paiements.", "href": "https://www.youtube.com/playlist?list=PL8z093C9OYl1Ew05YkFUPf9SfzJFQuyaN&index=10" },
+    { "title": "Stocks", "text": "Piloter les mouvements, entrepots et niveaux de stock.", "href": "https://www.youtube.com/playlist?list=PL8z093C9OYl1Ew05YkFUPf9SfzJFQuyaN&index=12" },
+    { "title": "Commandes fournisseurs", "text": "Creer, suivre et receptionner les commandes fournisseurs.", "href": "https://www.youtube.com/playlist?list=PL8z093C9OYl1Ew05YkFUPf9SfzJFQuyaN&index=14" },
+    { "title": "Factures fournisseurs", "text": "Enregistrer les factures fournisseurs et leurs reglements.", "href": "https://www.youtube.com/playlist?list=PL8z093C9OYl1Ew05YkFUPf9SfzJFQuyaN&index=15" }
+  ],
+  "modulesList": [
+    {
+      "title": "DoliStore",
+      "text": "Consulter la place de marche officielle pour retrouver les modules et extensions Dolibarr.",
+      "href": "https://www.dolistore.com/index.php?l=fr",
+      "image": "/assets/img/dolistore-squarred.png"
+    },
+    {
+      "title": "Feuilles de temps hebdomadaires",
+      "text": "Un module pour faciliter la saisie et le suivi des temps passes par semaine dans Dolibarr.",
+      "href": "https://www.dolistore.com/product.php?id=2527&l=fr"
+    },
+    {
+      "title": "DC1",
+      "text": "Generer les formulaires officiels DC1 depuis les propositions commerciales Dolibarr.",
+      "href": "https://www.dolistore.com/product.php?id=2584&l=fr"
+    },
+    {
+      "title": "DC2",
+      "text": "Completer les dossiers de candidature avec les formulaires DC2 relies aux propales.",
+      "href": "https://www.dolistore.com/product.php?id=2586&l=fr"
+    },
+    {
+      "title": "Diffusions",
+      "text": "Centraliser et tracer les bordereaux de diffusion de documents lies aux projets.",
+      "href": "https://www.dolistore.com/product.php?id=2836&l=en"
+    }
+  ],
+  "termsLinks": [
+    {
+      "title": "Conditions LMDB",
+      "text": "Conditions applicables aux prestations et services proposes par Les Metiers du Batiment.",
+      "href": "/mentions-legales/"
+    },
+    {
+      "title": "CGU DoliStore",
+      "text": "Conditions generales d'utilisation et de ventes de la place de marche DoliStore.",
+      "href": "https://www.dolistore.com/conditions-generales-dutilisation.php"
+    },
+    {
+      "title": "CGU vendeurs DoliStore",
+      "text": "Conditions applicables aux vendeurs et editeurs de modules sur DoliStore.",
+      "href": "https://www.dolistore.com/conditions-generales-dutilisation_vendeurs-de-modules.php"
+    },
+    {
+      "title": "Paiements DoliStore",
+      "text": "Informations sur les paiements et la securisation des transactions DoliStore.",
+      "href": "https://www.dolistore.com/paiements-et-securisation.php"
     }
   ],
   "guides": [

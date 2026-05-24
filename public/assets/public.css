@@ -17,7 +17,10 @@
 
 body {
   margin: 0;
-  background: var(--soft);
+  min-height: 100vh;
+  background:
+    linear-gradient(180deg, rgba(243, 247, 248, 0.88), rgba(243, 247, 248, 0.94)),
+    url("./immeuble-batiment.jpg") center 42% / cover fixed;
   color: var(--ink);
 }
 
@@ -35,13 +38,21 @@ a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 54px;
-  height: 54px;
+  width: 74px;
+  height: 74px;
   border-radius: 8px;
-  background: var(--brand);
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid var(--line);
   color: #fff;
   font-weight: 800;
   text-decoration: none;
+  box-shadow: 0 12px 28px rgba(22, 38, 54, 0.12);
+}
+
+.brand img {
+  width: 62px;
+  height: 62px;
+  object-fit: contain;
 }
 
 .panel {
@@ -133,7 +144,8 @@ label {
 }
 
 input,
-select {
+select,
+textarea {
   width: 100%;
   min-height: 46px;
   border: 1px solid var(--line);
@@ -145,9 +157,15 @@ select {
 }
 
 input:focus,
-select:focus {
+select:focus,
+textarea:focus {
   outline: 3px solid rgba(13, 107, 111, 0.18);
   border-color: var(--brand);
+}
+
+textarea {
+  min-height: 136px;
+  resize: vertical;
 }
 
 .checkbox {

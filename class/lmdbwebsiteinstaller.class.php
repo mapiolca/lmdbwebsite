@@ -401,6 +401,7 @@ class LmdbwebsiteInstaller
 		$content = (string) file_get_contents($sourceFile);
 		$content = $this->wrapPageContent($content, $definition);
 		$content = $this->normalizeSubscriptionLinks($content);
+		$content = $this->normalizeContactLinks($content);
 		$content = $this->normalizeInternalLinks($content);
 
 		$page = new WebsitePage($this->db);
@@ -481,7 +482,10 @@ class LmdbwebsiteInstaller
 			array('source' => 'home.html', 'pageurl' => 'home', 'meta' => 'home', 'public_path' => '/', 'is_home' => true, 'fallback_title' => 'Accueil'),
 			array('source' => 'fonctionnement.html', 'pageurl' => 'fonctionnement', 'meta' => 'fonctionnement', 'public_path' => '/fonctionnement/', 'fallback_title' => 'Fonctionnement'),
 			array('source' => 'tarifs.html', 'pageurl' => 'tarifs', 'meta' => 'tarifs', 'public_path' => '/tarifs/', 'fallback_title' => 'Tarifs'),
+			array('source' => 'guides.html', 'pageurl' => 'guides', 'meta' => 'guides', 'public_path' => '/guides/', 'fallback_title' => 'Guides'),
+			array('source' => 'modules.html', 'pageurl' => 'modules', 'meta' => 'modules', 'public_path' => '/modules/', 'fallback_title' => 'Nos modules'),
 			array('source' => 'contact.html', 'pageurl' => 'contact', 'meta' => 'contact', 'public_path' => '/contact/', 'fallback_title' => 'Contact'),
+			array('source' => 'conditions-generales.html', 'pageurl' => 'conditions-generales', 'meta' => 'conditions-generales', 'public_path' => '/conditions-generales/', 'fallback_title' => 'Conditions generales'),
 			array('source' => 'mentions-legales.html', 'pageurl' => 'mentions', 'meta' => 'mentions-legales', 'public_path' => '/mentions-legales/', 'fallback_title' => 'Mentions legales'),
 			array('source' => 'guides_erp-batiment.html', 'pageurl' => 'erp-batiment', 'meta' => 'guides/erp-batiment', 'public_path' => '/guides/erp-batiment/', 'fallback_title' => 'ERP batiment'),
 			array('source' => 'guides_devis-batiment.html', 'pageurl' => 'devis-batiment', 'meta' => 'guides/devis-batiment', 'public_path' => '/guides/devis-batiment/', 'fallback_title' => 'Devis batiment'),
@@ -575,7 +579,8 @@ class LmdbwebsiteInstaller
 				array('label' => 'Accueil', 'href' => '/'),
 				array('label' => 'Fonctionnement', 'href' => '/fonctionnement/'),
 				array('label' => 'Tarifs', 'href' => '/tarifs/'),
-				array('label' => 'Guides', 'href' => '/guides/erp-batiment/'),
+				array('label' => 'Guides', 'href' => '/guides/'),
+				array('label' => 'Nos modules', 'href' => '/modules/'),
 				array('label' => 'Contact', 'href' => '/contact/'),
 			);
 		}
@@ -606,7 +611,7 @@ class LmdbwebsiteInstaller
 		$footer = '<footer class="site-footer">'."\n";
 		$footer .= '  <div class="section-inner footer-grid">'."\n";
 		$footer .= '    <div><strong>'.$this->escapeHtml($siteName).'</strong><p>'.$this->escapeHtml($siteDescription).'</p></div>'."\n";
-		$footer .= '    <div><a href="/mentions-legales/">Mentions legales</a><br><a href="/contact/">Contact</a></div>'."\n";
+		$footer .= '    <div><a href="/conditions-generales/">Conditions generales</a><br><a href="/mentions-legales/">Mentions legales</a><br><a href="/modules/">Nos modules</a><br><a href="/contact/">Contact</a></div>'."\n";
 		$footer .= '  </div>'."\n";
 		$footer .= '</footer>'."\n";
 
@@ -639,6 +644,9 @@ class LmdbwebsiteInstaller
 		}
 
 		$header = '<meta property="og:title" content="'.$this->escapeHtml($definition['title']).'">'."\n";
+		if (!empty($site['faviconImage'])) {
+			$header .= '<link rel="icon" type="image/png" href="'.$this->escapeHtml((string) $site['faviconImage']).'">'."\n";
+		}
 		$header .= '<meta property="og:description" content="'.$this->escapeHtml($definition['description']).'">'."\n";
 		$header .= '<meta property="og:url" content="'.$this->escapeHtml($publicUrl).'">'."\n";
 		$header .= '<meta property="og:type" content="website">'."\n";
@@ -698,8 +706,9 @@ class LmdbwebsiteInstaller
 			'/' => array('home'),
 			'/fonctionnement/' => array('fonctionnement'),
 			'/tarifs/' => array('tarifs'),
+			'/guides/' => array('guides', 'erp-batiment', 'devis-batiment', 'chantier'),
+			'/modules/' => array('modules'),
 			'/contact/' => array('contact'),
-			'/guides/erp-batiment/' => array('erp-batiment', 'devis-batiment', 'chantier'),
 		);
 
 		return !empty($map[$href]) && in_array($pageurl, $map[$href], true);
@@ -854,8 +863,13 @@ class LmdbwebsiteInstaller
 			'href="/"' => 'href="index.php"',
 			'href="/fonctionnement/"' => 'href="fonctionnement.php"',
 			'href="/tarifs/"' => 'href="tarifs.php"',
+			'href="/tarifs/#offres"' => 'href="tarifs.php#offres"',
+			'href="#offres"' => 'href="#offres"',
 			'href="/contact/"' => 'href="contact.php"',
+			'href="/conditions-generales/"' => 'href="conditions-generales.php"',
+			'href="/modules/"' => 'href="modules.php"',
 			'href="/mentions-legales/"' => 'href="mentions.php"',
+			'href="/guides/"' => 'href="guides.php"',
 			'href="/guides/erp-batiment/"' => 'href="erp-batiment.php"',
 			'href="/guides/devis-batiment/"' => 'href="devis-batiment.php"',
 			'href="/guides/gestion-chantier/"' => 'href="chantier.php"',
@@ -885,6 +899,26 @@ class LmdbwebsiteInstaller
 	}
 
 	/**
+	 * Normalize contact form endpoint links to the dedicated public Dolibarr URL.
+	 *
+	 * @param string $content HTML content
+	 * @return string
+	 */
+	private function normalizeContactLinks($content)
+	{
+		$baseUrl = lmdbwebsite_contact_public_url('contact.php');
+		$result = preg_replace_callback(
+			'~(href|src|action)=(["\'])(?:https?://[^"\']+)?/custom/lmdbwebsite/public/contact\.php([^"\']*)\2~',
+			function ($matches) use ($baseUrl) {
+				return $matches[1].'='.$matches[2].$this->escapeHtml($baseUrl.$matches[3]).$matches[2];
+			},
+			$content
+		);
+
+		return $result === null ? $content : $result;
+	}
+
+	/**
 	 * Copy a file only when changed.
 	 *
 	 * @param string $source Source file
@@ -894,6 +928,9 @@ class LmdbwebsiteInstaller
 	private function copyFileIfChanged($source, $destination)
 	{
 		if (dol_is_file($destination) && sha1_file($source) === sha1_file($destination)) {
+			if ($this->isImageAssetPath($destination)) {
+				@chmod($destination, 0644);
+			}
 			return 0;
 		}
 
@@ -904,8 +941,22 @@ class LmdbwebsiteInstaller
 			return $this->fail('Unable to copy file '.$destination);
 		}
 		dolChmod($destination);
+		if ($this->isImageAssetPath($destination)) {
+			@chmod($destination, 0644);
+		}
 
 		return 1;
+	}
+
+	/**
+	 * Check whether a file path is a bundled image asset.
+	 *
+	 * @param string $path File path
+	 * @return bool
+	 */
+	private function isImageAssetPath($path)
+	{
+		return (bool) preg_match('~/assets/img/.*\.(?:gif|jpe?g|png|webp)$~i', $path);
 	}
 
 	/**

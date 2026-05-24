@@ -3,6 +3,7 @@ ModuleLmdbwebsiteDesc=Site public et tunnel d'abonnement Les Metiers du Batiment
 LmdbwebsiteSetup=Configuration LMDB Website
 LmdbwebsiteSiteUrl=URL publique du site
 LmdbwebsiteDolibarrUrl=URL publique Dolibarr
+LmdbwebsiteContactDolibarrUrl=URL publique Dolibarr contact
 LmdbwebsiteProductRefBase=Service offre Base
 LmdbwebsiteProductRefStandard=Service offre Standard
 LmdbwebsiteProductRefPro=Service offre Pro

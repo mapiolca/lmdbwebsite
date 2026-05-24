@@ -21,8 +21,14 @@ if (build.status !== 0) {
 for (const file of [
   "dist/site/index.html",
   "dist/site/tarifs/index.html",
+  "dist/site/guides/index.html",
+  "dist/site/modules/index.html",
+  "dist/site/conditions-generales/index.html",
   "dist/site/sitemap.xml",
   "dist/dolibarr-website/pages/home.html",
+  "resources/dolibarr-website/pages/guides.html",
+  "resources/dolibarr-website/pages/modules.html",
+  "resources/dolibarr-website/pages/conditions-generales.html",
   "resources/dolibarr-website/pages/home.html"
 ]) {
   await access(path.join(root, file));

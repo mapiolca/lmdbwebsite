@@ -21,6 +21,7 @@ Il depend du module Stancer `mapiolca/stancer` pour :
 ## Pages publiques
 
 - `/custom/lmdbwebsite/public/subscribe.php`
+- `/custom/lmdbwebsite/public/contact.php`
 - `/custom/lmdbwebsite/public/return.php`
 - `/custom/lmdbwebsite/public/onboarding.php`
 
@@ -37,4 +38,6 @@ Les exports pre-generes sont fournis dans `resources/dolibarr-website`. Depuis l
 
 Le bouton **Creer le site web** copie ces exports vers le repertoire Dolibarr `documents/website/lmdbwebsite`, cree le site `lmdbwebsite` dans le module natif Website si necessaire, puis cree ou met a jour les pages gerees par le module. Les pages ajoutees manuellement dans Dolibarr Website sont conservees.
 
-Si le site Website est servi sur un domaine different de Dolibarr, renseigner `LMDBWEBSITE_SITE_URL` avec l'URL du site public et `LMDBWEBSITE_DOLIBARR_URL` avec l'URL publique de Dolibarr. Recliquez ensuite sur **Creer le site web** pour resynchroniser les liens d'abonnement.
+Si le site Website est servi sur un domaine different de Dolibarr, renseigner `LMDBWEBSITE_SITE_URL` avec l'URL du site public et `LMDBWEBSITE_DOLIBARR_URL` avec l'URL publique de Dolibarr. Pour le formulaire de contact, `LMDBWEBSITE_CONTACT_DOLIBARR_URL` peut pointer vers un domaine separe dedie au formulaire public. Recliquez ensuite sur **Creer le site web** pour resynchroniser les liens d'abonnement et de contact.
+
+Le site exporte les pages accueil, fonctionnement, tarifs, guides, nos modules, contact, conditions generales, mentions legales et guides SEO initiaux. Le bouton **Creer le site web** copie aussi les images dans `documents/website/lmdbwebsite/assets/img` et force leurs permissions a `0644`.

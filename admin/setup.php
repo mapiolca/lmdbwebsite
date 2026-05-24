@@ -35,6 +35,7 @@ $form = new Form($db);
 $settings = array(
 	'LMDBWEBSITE_SITE_URL' => array('label' => 'LmdbwebsiteSiteUrl', 'type' => 'text'),
 	'LMDBWEBSITE_DOLIBARR_URL' => array('label' => 'LmdbwebsiteDolibarrUrl', 'type' => 'text'),
+	'LMDBWEBSITE_CONTACT_DOLIBARR_URL' => array('label' => 'LmdbwebsiteContactDolibarrUrl', 'type' => 'text'),
 	'LMDBWEBSITE_PRODUCT_REF_BASE' => array('label' => 'LmdbwebsiteProductRefBase', 'type' => 'service'),
 	'LMDBWEBSITE_PRODUCT_REF_STANDARD' => array('label' => 'LmdbwebsiteProductRefStandard', 'type' => 'service'),
 	'LMDBWEBSITE_PRODUCT_REF_PRO' => array('label' => 'LmdbwebsiteProductRefPro', 'type' => 'service'),

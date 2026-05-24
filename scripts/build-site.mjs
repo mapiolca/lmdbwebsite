@@ -1,4 +1,4 @@
-import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { chmod, cp, mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -33,11 +33,40 @@ function absoluteAssetUrl(value) {
   return `${content.site.url}${value.startsWith("/") ? value : `/${value}`}`;
 }
 
+async function chmodImageTree(dir) {
+  const entries = await readdir(dir, { withFileTypes: true });
+  for (const entry of entries) {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      await chmodImageTree(fullPath);
+      continue;
+    }
+    if (entry.isFile() && /\.(?:gif|jpe?g|png|webp)$/i.test(entry.name)) {
+      await chmod(fullPath, 0o644);
+    }
+  }
+}
+
+function isCurrentNav(currentSlug, href) {
+  if (href === slugToHref(currentSlug)) return true;
+  if (href === "/guides/" && (currentSlug === "guides" || currentSlug.startsWith("guides/"))) return true;
+  return false;
+}
+
 function nav(currentSlug) {
   return content.navigation.map((item) => {
-    const current = item.href === slugToHref(currentSlug) ? ' aria-current="page"' : "";
+    const current = isCurrentNav(currentSlug, item.href) ? ' aria-current="page"' : "";
     return `<a href="${item.href}"${current}>${escapeHtml(item.label)}</a>`;
   }).join("");
+}
+
+function footerLinks() {
+  return [
+    ["Conditions generales", "/conditions-generales/"],
+    ["Mentions legales", "/mentions-legales/"],
+    ["Nos modules", "/modules/"],
+    ["Contact", "/contact/"]
+  ].map(([label, href]) => `<a href="${href}">${escapeHtml(label)}</a>`).join("<br>\n        ");
 }
 
 function layout(page, body) {
@@ -51,6 +80,7 @@ function layout(page, body) {
     applicationCategory: "BusinessApplication",
     operatingSystem: "Web"
   };
+  const favicon = content.site.faviconImage ? `<link rel="icon" type="image/png" href="${escapeHtml(content.site.faviconImage)}">` : "";
 
   return `<!doctype html>
 <html lang="fr">
@@ -60,6 +90,7 @@ function layout(page, body) {
   <title>${escapeHtml(page.title)} | ${escapeHtml(content.site.name)}</title>
   <meta name="description" content="${escapeHtml(page.description)}">
   <link rel="canonical" href="${canonical}">
+  ${favicon}
   <meta property="og:title" content="${escapeHtml(page.title)}">
   <meta property="og:description" content="${escapeHtml(page.description)}">
   <meta property="og:url" content="${canonical}">
@@ -89,8 +120,7 @@ function layout(page, body) {
         <p>${escapeHtml(content.site.description)}</p>
       </div>
       <div>
-        <a href="/mentions-legales/">Mentions legales</a><br>
-        <a href="/contact/">Contact</a>
+        ${footerLinks()}
       </div>
     </div>
   </footer>
@@ -99,7 +129,7 @@ function layout(page, body) {
 </html>`;
 }
 
-function hero(page, actionHref = "/contact/") {
+function hero(page, actionHref = "/contact/", secondaryHref = "/tarifs/#offres") {
   return `<section class="hero">
   <div class="section-inner hero-grid">
     <div>
@@ -110,7 +140,7 @@ function hero(page, actionHref = "/contact/") {
       <!-- /DOLIBARR_EDITABLE:${page.id}_hero -->
       <div class="hero-actions">
         <a class="button" href="${actionHref}">${escapeHtml(page.cta || "Demander une demo")}</a>
-        <a class="button secondary" href="/tarifs/">Voir les tarifs</a>
+        <a class="button secondary" href="${secondaryHref}">Voir les tarifs</a>
       </div>
     </div>
     <figure class="hero-media">
@@ -166,7 +196,7 @@ function integrationsSection() {
     <div class="section-heading">
       <p class="eyebrow">Ecosysteme</p>
       <h2>Des integrations utiles autour de Dolibarr</h2>
-      <p class="lead">Le module garde Dolibarr au centre tout en connectant les briques de paiement, documents, donnees tiers et services externes.</p>
+      <p class="lead">Le module garde Dolibarr au centre tout en connectant les briques de paiement, documents, donnees tiers, modules et services externes.</p>
     </div>
     <div class="integration-grid">${integrations.map((item) => `<article class="integration-card">
       <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" loading="lazy">
@@ -177,15 +207,13 @@ function integrationsSection() {
 }
 
 function homePage(page) {
-  const cards = page.sections[0].items.map((item) => `<article class="card"><h3>${escapeHtml(item)}</h3><p>Un socle structure dans Dolibarr, avec des donnees exploitables pour vos equipes.</p></article>`).join("");
-  const steps = [
-    ["Choix de l'offre", "Le client choisit Base, Standard ou Pro, puis la frequence et le mode de paiement."],
-    ["Creation Dolibarr", "Le module cree le tiers, le contact, le contrat, la facture initiale et la facture modele."],
-    ["Paiement Stancer", "Le client paie par carte ou active un moyen de paiement recurrent via Stancer."],
-    ["Onboarding", "Apres paiement, le SIRET et le logo alimentent un dossier interne a traiter."]
-  ].map(([title, text]) => `<article class="card step"><h3>${escapeHtml(title)}</h3><p>${escapeHtml(text)}</p></article>`).join("");
+  const cards = page.sections[0].items.map((item) => {
+    const title = typeof item === "string" ? item : item.title;
+    const text = typeof item === "string" ? "Un socle structure dans Dolibarr, avec des donnees exploitables pour vos equipes." : item.text;
+    return `<article class="card"><h3>${escapeHtml(title)}</h3><p>${escapeHtml(text)}</p></article>`;
+  }).join("");
 
-  return `${hero(page, "/custom/lmdbwebsite/public/subscribe.php")}
+  return `${hero(page)}
 ${deviceShowcase()}
 <section class="section">
   <div class="section-inner">
@@ -193,26 +221,44 @@ ${deviceShowcase()}
     <div class="grid">${cards}</div>
   </div>
 </section>
-<section class="section alt">
-  <div class="section-inner steps">
-    <h2>Un tunnel d'abonnement connecte a Dolibarr</h2>
-    <div class="grid">${steps}</div>
-  </div>
-</section>
 ${integrationsSection()}`;
 }
 
 function fonctionnementPage(page) {
-  const rows = page.features.map(([title, text]) => `<div class="feature-row"><h3>${escapeHtml(title)}</h3><p>${escapeHtml(text)}</p></div>`).join("");
+  const platform = (page.platform || []).map(([title, text]) => `<article class="card"><h3>${escapeHtml(title)}</h3><p>${escapeHtml(text)}</p></article>`).join("");
+  const domains = (page.features || []).map(([title, text]) => `<div class="feature-row"><h3>${escapeHtml(title)}</h3><p>${escapeHtml(text)}</p></div>`).join("");
+  const workflow = (page.workflow || []).map(([title, text]) => `<article class="card step"><h3>${escapeHtml(title)}</h3><p>${escapeHtml(text)}</p></article>`).join("");
+
   return `${hero(page)}
+<section class="section">
+  <div class="section-inner split">
+    <div>
+      <p class="eyebrow">Socle open source</p>
+      <h2>Dolibarr reste le coeur de votre gestion</h2>
+      <p class="lead">Comme les offres Dolibarr les plus solides, l'approche consiste a partir d'un ERP/CRM complet, puis a activer les modules utiles sans complexifier l'usage quotidien.</p>
+    </div>
+    <div class="grid">${platform}</div>
+  </div>
+</section>
 ${visualCards()}
 <section class="section">
   <div class="section-inner split">
     <div>
-      <h2>Fonctionnalites principales</h2>
-      <p class="lead">Le site garde une presentation claire, tandis que Dolibarr reste la source des offres, contrats, factures et paiements.</p>
+      <p class="eyebrow">Domaines fonctionnels</p>
+      <h2>Un outil qui couvre les flux essentiels</h2>
+      <p class="lead">Les donnees circulent du prospect jusqu'a la facture, en passant par les chantiers, les produits, les achats et les documents.</p>
     </div>
-    <div class="feature-list">${rows}</div>
+    <div class="feature-list">${domains}</div>
+  </div>
+</section>
+<section class="section alt">
+  <div class="section-inner steps">
+    <div class="section-heading">
+      <p class="eyebrow">Mise en place</p>
+      <h2>Une progression par etapes</h2>
+      <p class="lead">L'objectif est de rendre Dolibarr utile rapidement, puis d'enrichir le perimetre au rythme de l'entreprise.</p>
+    </div>
+    <div class="grid">${workflow}</div>
   </div>
 </section>`;
 }
@@ -231,8 +277,8 @@ function pricingPage(page) {
     </article>`;
   }).join("");
 
-  return `${hero(page, "/custom/lmdbwebsite/public/subscribe.php")}
-<section class="section">
+  return `${hero(page, "#offres", "#offres")}
+<section class="section" id="offres">
   <div class="section-inner">
     <h2>Choisir une offre</h2>
     <div class="pricing-controls" aria-label="Frequence de facturation">
@@ -252,19 +298,102 @@ ${integrationsSection()}
 </section>`;
 }
 
-function contactPage(page) {
+function guidesHubPage(page) {
+  const community = (content.communityLinks || []).map((item) => `<article class="link-card">
+    <h3>${escapeHtml(item.title)}</h3>
+    <p>${escapeHtml(item.text)}</p>
+    <a class="text-link" href="${escapeHtml(item.href)}">Consulter</a>
+  </article>`).join("");
+  const tutorials = (content.tutorials || []).map((item) => `<article class="tutorial-card">
+    <h3>${escapeHtml(item.title)}</h3>
+    <p>${escapeHtml(item.text)}</p>
+    <a class="text-link" href="${escapeHtml(item.href)}">Voir le tutoriel</a>
+  </article>`).join("");
+
+  return `${hero(page, content.externalLinks.dolibarrYoutube, "/tarifs/#offres")}
+<section class="section">
+  <div class="section-inner">
+    <div class="section-heading">
+      <p class="eyebrow">Communaute Dolibarr</p>
+      <h2>Une communaute active autour d'un ERP libre</h2>
+      <p class="lead">Dolibarr est porte par son association, ses utilisateurs, ses developpeurs, sa place de marche et ses ressources de formation. Ces liens vous aident a trouver de l'aide et des extensions utiles.</p>
+    </div>
+    <div class="grid">${community}</div>
+  </div>
+</section>
+<section class="section alt">
+  <div class="section-inner">
+    <div class="section-heading">
+      <p class="eyebrow">Tutoriels officiels</p>
+      <h2>Prendre en main les fonctionnalites Dolibarr</h2>
+      <p class="lead">Les tuiles ci-dessous regroupent les tutoriels video de la playlist officielle francaise Dolibarr.</p>
+    </div>
+    <div class="tutorial-grid">${tutorials}</div>
+  </div>
+</section>`;
+}
+
+function modulesPage(page) {
+  const modules = (content.modulesList || []).map((item) => `<article class="module-card">
+    ${item.image ? `<img src="${escapeHtml(item.image)}" alt="" loading="lazy">` : '<span class="module-icon">LMDB</span>'}
+    <div>
+      <h3>${escapeHtml(item.title)}</h3>
+      <p>${escapeHtml(item.text)}</p>
+      <a class="text-link" href="${escapeHtml(item.href)}">Voir le module</a>
+    </div>
+  </article>`).join("");
+
   return `${hero(page)}
 <section class="section">
+  <div class="section-inner">
+    <div class="section-heading">
+      <p class="eyebrow">Modules Dolibarr</p>
+      <h2>Des extensions publiees sur le DoliStore</h2>
+      <p class="lead">Ces modules completent Dolibarr avec des usages metier autour des temps, appels d'offres et diffusions de documents.</p>
+    </div>
+    <div class="module-grid">${modules}</div>
+    <div class="note-panel">
+      <strong>Achat via DoliStore</strong>
+      <p>L'achat de modules via le DoliStore contribue au projet open source Dolibarr et soutient l'association Dolibarr, tout en donnant acces aux mises a jour et au support indiques sur chaque fiche.</p>
+    </div>
+  </div>
+</section>`;
+}
+
+function contactPage(page) {
+  const endpoint = content.site.contactEndpoint || "/custom/lmdbwebsite/public/contact.php";
+  return `${hero(page, endpoint)}
+<section class="section">
   <div class="section-inner split">
-    <div class="contact-panel">
-      <h2>Contact</h2>
-      <p>Envoyez votre demande depuis Dolibarr ou par email : <a href="mailto:${content.site.email}">${content.site.email}</a>.</p>
-      <a class="button" href="/custom/lmdbwebsite/public/subscribe.php">Demander une demo</a>
-    </div>
     <div>
-      <h2>Apres abonnement</h2>
-      <p class="lead">Le formulaire post-paiement collecte le SIRET et le logo pour preparer la creation de l'entite Dolibarr.</p>
+      <p class="eyebrow">Contact</p>
+      <h2>Envoyer une demande</h2>
+      <p class="lead">Le formulaire cree une demande dans Dolibarr pour qualifier votre besoin et vous recontacter proprement.</p>
     </div>
+    <div class="contact-embed">
+      <iframe class="contact-frame" src="${escapeHtml(endpoint)}" title="Formulaire de contact Les Metiers du Batiment" loading="lazy"></iframe>
+      <p><a class="text-link" href="${escapeHtml(endpoint)}">Ouvrir le formulaire dans une nouvelle page</a></p>
+    </div>
+  </div>
+</section>`;
+}
+
+function termsPage(page) {
+  const cards = (content.termsLinks || []).map((item) => `<article class="link-card">
+    <h3>${escapeHtml(item.title)}</h3>
+    <p>${escapeHtml(item.text)}</p>
+    <a class="text-link" href="${escapeHtml(item.href)}">Consulter</a>
+  </article>`).join("");
+
+  return `${hero(page, "/contact/", "/tarifs/#offres")}
+<section class="section">
+  <div class="section-inner">
+    <div class="section-heading">
+      <p class="eyebrow">Conditions</p>
+      <h2>Documents et conditions des services</h2>
+      <p class="lead">Ces liens regroupent les informations utiles pour consulter les conditions de vente, d'utilisation et de paiement des services concernes.</p>
+    </div>
+    <div class="grid">${cards}</div>
   </div>
 </section>`;
 }
@@ -284,7 +413,7 @@ function legalPage(page) {
 
 function guidePage(page) {
   const body = page.body.map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join("");
-  return `${hero({ ...page, id: page.slug.replaceAll("/", "_"), slug: page.slug, cta: "Voir les tarifs" }, "/tarifs/")}
+  return `${hero({ ...page, id: page.slug.replaceAll("/", "_"), slug: page.slug, cta: "Voir les tarifs" }, "/tarifs/#offres", "/guides/")}
 <section class="section">
   <div class="section-inner article">
     ${body}
@@ -296,7 +425,10 @@ function renderPage(page) {
   if (page.id === "home") return homePage(page);
   if (page.id === "fonctionnement") return fonctionnementPage(page);
   if (page.id === "tarifs") return pricingPage(page);
+  if (page.id === "guides") return guidesHubPage(page);
+  if (page.id === "modules") return modulesPage(page);
   if (page.id === "contact") return contactPage(page);
+  if (page.id === "conditions-generales") return termsPage(page);
   if (page.id === "mentions-legales") return legalPage(page);
   return hero(page);
 }
@@ -324,8 +456,10 @@ for (const output of dolibarrOutputs) {
   await writeFile(path.join(output, "assets/main.js"), await readFile(path.join(root, "src/main.js"), "utf8"));
 }
 await cp(path.join(sourceAssets, "img"), path.join(outSite, "assets/img"), { recursive: true });
+await chmodImageTree(path.join(outSite, "assets/img"));
 for (const output of dolibarrOutputs) {
   await cp(path.join(sourceAssets, "img"), path.join(output, "assets/img"), { recursive: true });
+  await chmodImageTree(path.join(output, "assets/img"));
 }
 
 for (const page of content.pages) {

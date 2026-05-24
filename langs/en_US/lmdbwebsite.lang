@@ -3,6 +3,7 @@ ModuleLmdbwebsiteDesc=Les Metiers du Batiment public website and subscription fu
 LmdbwebsiteSetup=LMDB Website setup
 LmdbwebsiteSiteUrl=Public website URL
 LmdbwebsiteDolibarrUrl=Public Dolibarr URL
+LmdbwebsiteContactDolibarrUrl=Public Dolibarr contact URL
 LmdbwebsiteProductRefBase=Base offer service
 LmdbwebsiteProductRefStandard=Standard offer service
 LmdbwebsiteProductRefPro=Pro offer service

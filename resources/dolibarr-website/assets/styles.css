@@ -19,6 +19,10 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
   color: var(--ink);
@@ -334,7 +338,7 @@ h3 {
 
 .integration-grid {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 14px;
 }
 
@@ -374,8 +378,93 @@ h3 {
 
 .card p,
 .feature-list p,
-.article p {
+.article p,
+.link-card p,
+.tutorial-card p,
+.module-card p {
   color: var(--muted);
+}
+
+.link-card,
+.tutorial-card,
+.module-card,
+.note-panel {
+  min-height: 100%;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fff;
+}
+
+.link-card,
+.tutorial-card,
+.note-panel {
+  padding: 22px;
+}
+
+.text-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  color: var(--blue-dark);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.text-link:hover {
+  color: var(--blue);
+  text-decoration: underline;
+}
+
+.tutorial-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.tutorial-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.tutorial-card .text-link {
+  margin-top: auto;
+}
+
+.module-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.module-card {
+  display: grid;
+  grid-template-columns: 86px minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+  padding: 20px;
+}
+
+.module-card img,
+.module-icon {
+  width: 86px;
+  height: 86px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-soft);
+  object-fit: contain;
+}
+
+.module-icon {
+  display: grid;
+  place-items: center;
+  color: var(--blue-dark);
+  font-size: 0.9rem;
+  font-weight: 900;
+}
+
+.note-panel {
+  margin-top: 22px;
+  background: #f7fbf6;
 }
 
 .feature-list {
@@ -485,6 +574,20 @@ h3 {
   background: #fff;
 }
 
+.contact-embed {
+  min-width: 0;
+}
+
+.contact-frame {
+  display: block;
+  width: 100%;
+  min-height: 780px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
 .site-footer {
   padding: 36px 0;
   border-top: 1px solid var(--line);
@@ -528,12 +631,14 @@ h3 {
   .grid,
   .grid.two,
   .device-showcase,
-  .visual-grid {
+  .visual-grid,
+  .tutorial-grid,
+  .module-grid {
     grid-template-columns: 1fr;
   }
 
   .integration-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .hero {
@@ -562,6 +667,16 @@ h3 {
 
   .integration-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .module-card {
+    grid-template-columns: 1fr;
+  }
+
+  .module-card img,
+  .module-icon {
+    width: 72px;
+    height: 72px;
   }
 
   .phone-frame {
