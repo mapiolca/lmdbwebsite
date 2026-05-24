@@ -429,9 +429,7 @@ class LmdbwebsiteInstaller
 		$page->description = $definition['description'];
 		$page->keywords = $definition['keywords'];
 		$page->lang = 'fr';
-		if ($created || trim((string) $page->htmlheader) === '') {
-			$page->htmlheader = $this->buildPageHtmlHeader($definition);
-		}
+		$page->htmlheader = $this->buildPageHtmlHeader($definition);
 		$page->content = $content;
 		$page->grabbed_from = 'lmdbwebsite/resources/dolibarr-website/pages/'.$definition['source'];
 		$page->author_alias = 'LMDB Website';
@@ -1018,7 +1016,9 @@ class LmdbwebsiteInstaller
 		$content .= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
 		$content .= "ob_start();\n";
 		$content .= "if (! headers_sent()) {\n";
-		$content .= "header('Cache-Control: max-age=3600, public, must-revalidate');\n";
+		$content .= "header('Cache-Control: no-cache, max-age=0, must-revalidate');\n";
+		$content .= "header('Pragma: no-cache');\n";
+		$content .= "header('Expires: 0');\n";
 		$content .= "header('Content-type: text/css');\n";
 		$content .= "}\n";
 		$content .= "// END PHP ?>\n";
@@ -1044,8 +1044,12 @@ class LmdbwebsiteInstaller
 		$content .= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
 		$content .= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
 		$content .= "ob_start();\n";
-		$content .= "header('Cache-Control: max-age=3600, public, must-revalidate');\n";
+		$content .= "if (! headers_sent()) {\n";
+		$content .= "header('Cache-Control: no-cache, max-age=0, must-revalidate');\n";
+		$content .= "header('Pragma: no-cache');\n";
+		$content .= "header('Expires: 0');\n";
 		$content .= "header('Content-type: application/javascript');\n";
+		$content .= "}\n";
 		$content .= "// END PHP ?>\n";
 		$content .= $js."\n";
 		$content .= "<?php // BEGIN PHP\n";

@@ -16,6 +16,7 @@
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 dol_include_once('/lmdbwebsite/lib/lmdbwebsite.lib.php');
 dol_include_once('/lmdbwebsite/class/lmdbwebsiteinstaller.class.php');
 
@@ -29,6 +30,7 @@ if (!$user->admin) {
 
 $action = GETPOST('action', 'aZ09');
 $installer = new LmdbwebsiteInstaller($db);
+$form = new Form($db);
 
 $settings = array(
 	'LMDBWEBSITE_SITE_URL' => array('label' => 'LmdbwebsiteSiteUrl', 'type' => 'text'),
@@ -39,15 +41,15 @@ $settings = array(
 	'LMDBWEBSITE_PRODUCT_REF_BASE_ANNUAL' => array('label' => 'LmdbwebsiteProductRefBaseAnnual', 'type' => 'service'),
 	'LMDBWEBSITE_PRODUCT_REF_STANDARD_ANNUAL' => array('label' => 'LmdbwebsiteProductRefStandardAnnual', 'type' => 'service'),
 	'LMDBWEBSITE_PRODUCT_REF_PRO_ANNUAL' => array('label' => 'LmdbwebsiteProductRefProAnnual', 'type' => 'service'),
-	'LMDBWEBSITE_USER_ID' => array('label' => 'LmdbwebsiteUserId', 'type' => 'number'),
-	'LMDBWEBSITE_BANK_ACCOUNT_ID' => array('label' => 'LmdbwebsiteBankAccountId', 'type' => 'number'),
+	'LMDBWEBSITE_USER_ID' => array('label' => 'LmdbwebsiteUserId', 'type' => 'user'),
+	'LMDBWEBSITE_BANK_ACCOUNT_ID' => array('label' => 'LmdbwebsiteBankAccountId', 'type' => 'bankaccount'),
 );
 $serviceOptions = lmdbwebsite_admin_get_service_options($db);
 
 if ($action === 'save') {
 	$error = 0;
 	foreach ($settings as $key => $meta) {
-		$value = trim(GETPOST($key, 'alphanohtml'));
+		$value = lmdbwebsite_admin_get_setting_post_value($key, $meta);
 		$result = dolibarr_set_const($db, $key, $value, 'chaine', 0, '', $conf->entity);
 		if ($result <= 0) {
 			$error++;
@@ -113,6 +115,10 @@ foreach ($settings as $key => $meta) {
 	print '<td>'.$langs->trans($meta['label']).'</td>';
 	if ($meta['type'] === 'service') {
 		print '<td>'.lmdbwebsite_admin_print_service_select($key, $value, $serviceOptions).'</td>';
+	} elseif ($meta['type'] === 'user') {
+		print '<td>'.lmdbwebsite_admin_print_user_select($form, $key, $value).'</td>';
+	} elseif ($meta['type'] === 'bankaccount') {
+		print '<td>'.lmdbwebsite_admin_print_bank_account_select($form, $key, $value).'</td>';
 	} else {
 		print '<td><input class="flat minwidth300" type="'.$meta['type'].'" name="'.$key.'" value="'.dol_escape_htmltag($value).'"></td>';
 	}
@@ -185,6 +191,23 @@ print dol_get_fiche_end();
 
 llxFooter();
 $db->close();
+
+/**
+ * Return a sanitized setup value from POST.
+ *
+ * @param string $key Settings key
+ * @param array<string,string> $meta Settings metadata
+ * @return string
+ */
+function lmdbwebsite_admin_get_setting_post_value($key, $meta)
+{
+	if (in_array($meta['type'], array('user', 'bankaccount'), true)) {
+		$value = (int) GETPOST($key, 'int');
+		return $value > 0 ? (string) $value : '';
+	}
+
+	return trim(GETPOST($key, 'alphanohtml'));
+}
 
 /**
  * Return service products available for the current multicompany context.
@@ -273,4 +296,40 @@ function lmdbwebsite_admin_print_service_select($key, $value, $options)
 	}
 
 	return $html;
+}
+
+/**
+ * Print a select2 user selector for the current multicompany context.
+ *
+ * @param Form $form Form helper
+ * @param string $key Settings key
+ * @param string $value Current user id
+ * @return string
+ */
+function lmdbwebsite_admin_print_user_select(Form $form, $key, $value)
+{
+	$selected = (int) $value > 0 ? (int) $value : '';
+	if (method_exists($form, 'select_dolusers')) {
+		return $form->select_dolusers($selected, $key, 1, null, 0, '', '', 'default', 0, 1, '', 0, '', 'minwidth300 maxwidth500');
+	}
+
+	return '<input class="flat minwidth300" type="number" name="'.dol_escape_htmltag($key).'" value="'.dol_escape_htmltag($value).'">';
+}
+
+/**
+ * Print a select2 bank account selector for open accounts.
+ *
+ * @param Form $form Form helper
+ * @param string $key Settings key
+ * @param string $value Current bank account id
+ * @return string
+ */
+function lmdbwebsite_admin_print_bank_account_select(Form $form, $key, $value)
+{
+	$selected = (int) $value > 0 ? (int) $value : '';
+	if (method_exists($form, 'select_comptes')) {
+		return (string) $form->select_comptes($selected, $key, 0, '', 1, '', 1, 'minwidth300 maxwidth500', 1);
+	}
+
+	return '<input class="flat minwidth300" type="number" name="'.dol_escape_htmltag($key).'" value="'.dol_escape_htmltag($value).'">';
 }

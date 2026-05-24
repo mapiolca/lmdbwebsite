@@ -15,7 +15,7 @@ Il depend du module Stancer `mapiolca/stancer` pour :
 1. Deposer ce dossier comme module custom Dolibarr `lmdbwebsite`.
 2. Installer et activer les modules `Website` et `stancer`.
 3. Activer le module `lmdbwebsite`.
-4. Configurer les URL, choisir les services du catalogue Dolibarr et renseigner l'utilisateur technique dans `Configuration > Modules > LMDB Website`.
+4. Configurer les URL, choisir les services du catalogue Dolibarr, l'utilisateur technique et le compte bancaire dans `Configuration > Modules > LMDB Website`.
 5. Cliquer sur **Creer le site web** dans la configuration du module pour creer ou synchroniser le site natif Dolibarr Website.
 
 ## Pages publiques

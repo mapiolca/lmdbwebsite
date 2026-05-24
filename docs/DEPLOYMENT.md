@@ -31,8 +31,8 @@ Le bouton est idempotent : il met a jour les pages gerees par `lmdbwebsite`, gar
    - `LMDBWEBSITE_PRODUCT_REF_BASE_ANNUAL` si un produit annuel dedie existe
    - `LMDBWEBSITE_PRODUCT_REF_STANDARD_ANNUAL` si un produit annuel dedie existe
    - `LMDBWEBSITE_PRODUCT_REF_PRO_ANNUAL` si un produit annuel dedie existe
-   - `LMDBWEBSITE_USER_ID`
-   - `LMDBWEBSITE_BANK_ACCOUNT_ID`
+   - utilisateur technique a utiliser pour les creations automatiques
+   - compte bancaire ouvert a utiliser pour enregistrer les paiements
 5. Creer ou verifier les services Dolibarr correspondant aux offres, puis les choisir dans les selecteurs de la configuration du module.
 6. Activer les taches planifiees du module :
    - reconciliation des paiements Stancer ;

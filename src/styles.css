@@ -33,6 +33,7 @@ a {
 img {
   display: block;
   max-width: 100%;
+  height: auto;
 }
 
 .site-header {
@@ -69,6 +70,7 @@ img {
 .brand-logo {
   width: 42px;
   height: 42px;
+  flex: 0 0 42px;
   object-fit: contain;
 }
 
@@ -136,7 +138,7 @@ img {
 
 .hero-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.85fr);
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.92fr);
   gap: 48px;
   align-items: center;
 }
@@ -195,8 +197,8 @@ h3 {
 
 .hero-media img {
   width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
+  aspect-ratio: 16 / 10;
+  object-fit: contain;
 }
 
 .section {
@@ -235,14 +237,16 @@ h3 {
 
 .device-showcase {
   display: grid;
-  grid-template-columns: minmax(0, 0.72fr) minmax(420px, 1fr);
+  grid-template-columns: minmax(0, 0.78fr) minmax(360px, 0.9fr);
   gap: 42px;
   align-items: center;
 }
 
 .device-media {
   position: relative;
-  min-height: 360px;
+  justify-self: end;
+  width: min(100%, 620px);
+  min-height: 310px;
 }
 
 .device-frame {
@@ -255,8 +259,13 @@ h3 {
   display: block;
 }
 
+.device-shell {
+  width: 100%;
+  height: auto;
+}
+
 .laptop-frame {
-  width: min(100%, 680px);
+  width: min(100%, 560px);
   margin-left: auto;
 }
 
@@ -273,8 +282,9 @@ h3 {
   position: absolute;
   right: -4px;
   bottom: 0;
-  width: 24%;
-  min-width: 120px;
+  width: 22%;
+  min-width: 104px;
+  max-width: 150px;
   filter: drop-shadow(0 18px 30px rgba(23, 32, 42, 0.18));
 }
 
@@ -302,8 +312,16 @@ h3 {
 
 .visual-card img {
   width: 100%;
-  aspect-ratio: 4 / 3;
+  height: clamp(180px, 18vw, 230px);
   object-fit: cover;
+}
+
+.visual-card:nth-child(2) img {
+  object-position: 50% 42%;
+}
+
+.visual-card:nth-child(3) img {
+  object-position: 50% 62%;
 }
 
 .visual-card div {
@@ -322,6 +340,7 @@ h3 {
 
 .integration-card {
   display: grid;
+  grid-template-rows: 60px auto;
   min-height: 126px;
   padding: 18px;
   place-items: center;
@@ -334,9 +353,15 @@ h3 {
 }
 
 .integration-card img {
-  max-width: 92px;
-  max-height: 54px;
+  width: auto;
+  height: auto;
+  max-width: min(100%, 108px);
+  max-height: 58px;
   object-fit: contain;
+}
+
+.integration-card:nth-child(5) img {
+  max-width: min(100%, 132px);
 }
 
 .card {
@@ -516,7 +541,12 @@ h3 {
   }
 
   .device-media {
-    min-height: 260px;
+    justify-self: stretch;
+    min-height: 270px;
+  }
+
+  .laptop-frame {
+    margin-right: auto;
   }
 }
 
@@ -535,7 +565,12 @@ h3 {
   }
 
   .phone-frame {
-    width: 30%;
+    width: 28%;
     min-width: 92px;
+  }
+
+  .hero-media img,
+  .visual-card img {
+    height: auto;
   }
 }
