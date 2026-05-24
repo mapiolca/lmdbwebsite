@@ -316,6 +316,7 @@ class LmdbwebsiteSubscription extends CommonObject
 		$this->payment_status = 'created';
 		$this->onboarding_token = bin2hex(random_bytes(32));
 		$this->onboarding_token_expiry = $this->db->idate(dol_time_plus_duree(dol_now(), 30, 'd'));
+		$this->onboarding_siret = preg_replace('/\D/', '', (string) ($data['siret'] ?? ''));
 		$this->next_invoice_date = $this->db->idate($this->nextDateForFrequency($frequency));
 		$this->last_invoice_date = $this->db->idate(dol_now());
 		$this->ip_hash = lmdbwebsite_ip_hash();
@@ -877,6 +878,7 @@ class LmdbwebsiteSubscription extends CommonObject
 		$soc->client = 1;
 		$soc->email = trim((string) ($data['email'] ?? ''));
 		$soc->phone = trim((string) ($data['phone'] ?? ''));
+		$soc->idprof1 = preg_replace('/\D/', '', (string) ($data['siret'] ?? ''));
 		$soc->address = trim((string) ($data['address'] ?? ''));
 		$soc->zip = trim((string) ($data['zip'] ?? ''));
 		$soc->town = trim((string) ($data['town'] ?? ''));

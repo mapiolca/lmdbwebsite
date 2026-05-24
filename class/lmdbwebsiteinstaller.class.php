@@ -568,6 +568,7 @@ class LmdbwebsiteInstaller
 
 		$siteName = empty($site['name']) ? 'Les Metiers du Batiment' : (string) $site['name'];
 		$siteDescription = empty($site['description']) ? '' : (string) $site['description'];
+		$logoImage = empty($site['logoImage']) ? '/assets/img/mediumsmall-res.png' : (string) $site['logoImage'];
 		$portalUrl = empty($externalLinks['portal']) ? '' : (string) $externalLinks['portal'];
 		$erpUrl = empty($externalLinks['erp']) ? '' : (string) $externalLinks['erp'];
 
@@ -599,7 +600,7 @@ class LmdbwebsiteInstaller
 
 		$header = '<header class="site-header">'."\n";
 		$header .= '  <div class="nav-wrap">'."\n";
-		$header .= '    <a class="brand" href="/"><span class="brand-mark">LM</span><span>'.$this->escapeHtml($siteName).'</span></a>'."\n";
+		$header .= '    <a class="brand" href="/"><img class="brand-logo" src="'.$this->escapeHtml($logoImage).'" alt="" width="500" height="500"><span>'.$this->escapeHtml($siteName).'</span></a>'."\n";
 		$header .= '    <nav class="nav-links" aria-label="Navigation principale">'.$navHtml.'</nav>'."\n";
 		$header .= '  </div>'."\n";
 		$header .= '</header>'."\n";
@@ -624,7 +625,7 @@ class LmdbwebsiteInstaller
 	{
 		$config = $this->getContentConfig();
 		$site = empty($config['site']) || !is_array($config['site']) ? array() : $config['site'];
-		$productImage = empty($site['productImage']) ? '' : (string) $site['productImage'];
+		$productImage = $this->buildPublicAssetUrl(empty($site['productImage']) ? '' : (string) $site['productImage']);
 		$publicUrl = $this->buildPublicUrl($definition);
 
 		$schema = array(
@@ -665,6 +666,25 @@ class LmdbwebsiteInstaller
 		$path = empty($definition['public_path']) ? '/'.$definition['pageurl'].'.php' : (string) $definition['public_path'];
 
 		return $baseUrl.$path;
+	}
+
+	/**
+	 * Return an absolute public URL for a Website asset.
+	 *
+	 * @param string $path Asset path or URL
+	 * @return string
+	 */
+	private function buildPublicAssetUrl($path)
+	{
+		if ($path === '' || preg_match('~^(?:https?:)?//~', $path)) {
+			return $path;
+		}
+
+		$config = $this->getContentConfig();
+		$site = empty($config['site']) || !is_array($config['site']) ? array() : $config['site'];
+		$baseUrl = rtrim((string) lmdbwebsite_get_conf('SITE_URL', empty($site['url']) ? getDolGlobalString('MAIN_URL_ROOT', '') : (string) $site['url']), '/');
+
+		return $baseUrl.'/'.ltrim($path, '/');
 	}
 
 	/**

@@ -4,8 +4,9 @@
     "url": "https://lesmetiersdubatiment.fr",
     "email": "contact@lesmetiersdubatiment.fr",
     "description": "ERP/CRM Dolibarr pense pour les artisans, entreprises du batiment et gestionnaires de chantiers.",
-    "heroImage": "https://lesmetiersdubatiment.fr/img/capture_page_accueil.png",
-    "productImage": "https://lesmetiersdubatiment.fr/img/capture_page_accueil.png"
+    "logoImage": "/assets/img/mediumsmall-res.png",
+    "heroImage": "/assets/img/capture-page-accueil.png",
+    "productImage": "/assets/img/capture-page-accueil.png"
   },
   "navigation": [
     { "label": "Accueil", "href": "/" },
@@ -18,6 +19,14 @@
     "portal": "https://portail.lesmetiersdubatiment.fr/",
     "erp": "https://erp.lesmetiersdubatiment.fr/"
   },
+  "integrations": [
+    { "name": "Stancer", "image": "/assets/img/stancer.png" },
+    { "name": "Qonto", "image": "/assets/img/qonto.jpeg" },
+    { "name": "Dropbox", "image": "/assets/img/dropbox.png" },
+    { "name": "Google", "image": "/assets/img/google.jpeg" },
+    { "name": "SocieteInfo", "image": "/assets/img/societeinfo.png" },
+    { "name": "Stripe", "image": "/assets/img/stripe.png" }
+  ],
   "offers": [
     {
       "id": "base",
@@ -166,4 +175,3 @@
     }
   ]
 }
-

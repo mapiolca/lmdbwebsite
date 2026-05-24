@@ -6,3 +6,4 @@ Les commentaires DOLIBARR_EDITABLE indiquent les blocs qui doivent rester modifi
 Assets:
 - assets/styles.css
 - assets/main.js
+- assets/img

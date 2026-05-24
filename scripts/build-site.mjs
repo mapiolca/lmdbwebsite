@@ -1,4 +1,4 @@
-import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -7,6 +7,7 @@ const content = JSON.parse(await readFile(path.join(root, "content/site.json"), 
 const outSite = path.join(root, "dist/site");
 const outDolibarr = path.join(root, "dist/dolibarr-website");
 const outDolibarrResource = path.join(root, "resources/dolibarr-website");
+const sourceAssets = path.join(root, "src/assets");
 const dolibarrOutputs = [outDolibarr, outDolibarrResource];
 
 function escapeHtml(value) {
@@ -23,6 +24,13 @@ function slugToHref(slug) {
 
 function pagePath(base, slug) {
   return path.join(base, slug || "", "index.html");
+}
+
+function absoluteAssetUrl(value) {
+  if (!value || value.startsWith("http://") || value.startsWith("https://") || value.startsWith("//")) {
+    return value;
+  }
+  return `${content.site.url}${value.startsWith("/") ? value : `/${value}`}`;
 }
 
 function nav(currentSlug) {
@@ -56,14 +64,14 @@ function layout(page, body) {
   <meta property="og:description" content="${escapeHtml(page.description)}">
   <meta property="og:url" content="${canonical}">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="${escapeHtml(content.site.productImage)}">
+  <meta property="og:image" content="${escapeHtml(absoluteAssetUrl(content.site.productImage))}">
   <link rel="stylesheet" href="/assets/styles.css">
   <script type="application/ld+json">${JSON.stringify(schema)}</script>
 </head>
 <body>
   <header class="site-header">
     <div class="nav-wrap">
-      <a class="brand" href="/"><span class="brand-mark">LM</span><span>${escapeHtml(content.site.name)}</span></a>
+      <a class="brand" href="/"><img class="brand-logo" src="${escapeHtml(content.site.logoImage)}" alt="" width="500" height="500"><span>${escapeHtml(content.site.name)}</span></a>
       <nav class="nav-links" aria-label="Navigation principale">
         ${nav(page.slug)}
         <a href="${content.externalLinks.portal}">Portail</a>
@@ -112,6 +120,62 @@ function hero(page, actionHref = "/contact/") {
 </section>`;
 }
 
+function deviceShowcase() {
+  return `<section class="section visual-section">
+  <div class="section-inner device-showcase">
+    <div>
+      <p class="eyebrow">Terrain et bureau connectes</p>
+      <h2>Une interface exploitable sur ordinateur et mobile</h2>
+      <p class="lead">Les equipes gardent la meme base Dolibarr pour les devis, dossiers clients, chantiers, factures et documents, au bureau comme en deplacement.</p>
+    </div>
+    <div class="device-media" aria-label="Apercus Dolibarr">
+      <figure class="device-frame laptop-frame">
+        <img class="device-shell" src="/assets/img/apple-macbook-pro.png" alt="" width="2000" height="1182" loading="lazy">
+        <img class="device-screen laptop-screen" src="/assets/img/capture-page-accueil.png" alt="Interface ERP Dolibarr Les Metiers du Batiment sur ordinateur" width="1280" height="800" loading="lazy">
+      </figure>
+      <figure class="device-frame phone-frame">
+        <img class="device-shell" src="/assets/img/apple-iphone-5s-silver.png" alt="" width="769" height="1607" loading="lazy">
+        <img class="device-screen phone-screen" src="/assets/img/mobile.png" alt="Interface mobile Dolibarr Les Metiers du Batiment" width="640" height="1136" loading="lazy">
+      </figure>
+    </div>
+  </div>
+</section>`;
+}
+
+function visualCards() {
+  const visuals = [
+    ["Chantiers", "Centralisez les dossiers, achats, documents et etapes utiles pour suivre chaque chantier.", "/assets/img/cust-home.jpg", "Batiment residentiel suivi dans Dolibarr"],
+    ["Construction", "Gardez une lecture claire des tiers, produits, services et pieces administratives.", "/assets/img/immeuble-batiment.jpg", "Immeuble moderne"],
+    ["Organisation", "Assemblez un socle ERP durable autour de processus simples et exploitables.", "/assets/img/construction-puzzle.jpg", "Puzzle de construction"]
+  ];
+  return `<section class="section">
+  <div class="section-inner">
+    <h2>Un socle pense pour les metiers du batiment</h2>
+    <div class="visual-grid">${visuals.map(([title, text, image, alt]) => `<article class="visual-card">
+      <img src="${image}" alt="${escapeHtml(alt)}" loading="lazy">
+      <div><h3>${escapeHtml(title)}</h3><p>${escapeHtml(text)}</p></div>
+    </article>`).join("")}</div>
+  </div>
+</section>`;
+}
+
+function integrationsSection() {
+  const integrations = content.integrations || [];
+  return `<section class="section alt">
+  <div class="section-inner">
+    <div class="section-heading">
+      <p class="eyebrow">Ecosysteme</p>
+      <h2>Des integrations utiles autour de Dolibarr</h2>
+      <p class="lead">Le module garde Dolibarr au centre tout en connectant les briques de paiement, documents, donnees tiers et services externes.</p>
+    </div>
+    <div class="integration-grid">${integrations.map((item) => `<article class="integration-card">
+      <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" loading="lazy">
+      <span>${escapeHtml(item.name)}</span>
+    </article>`).join("")}</div>
+  </div>
+</section>`;
+}
+
 function homePage(page) {
   const cards = page.sections[0].items.map((item) => `<article class="card"><h3>${escapeHtml(item)}</h3><p>Un socle structure dans Dolibarr, avec des donnees exploitables pour vos equipes.</p></article>`).join("");
   const steps = [
@@ -122,6 +186,7 @@ function homePage(page) {
   ].map(([title, text]) => `<article class="card step"><h3>${escapeHtml(title)}</h3><p>${escapeHtml(text)}</p></article>`).join("");
 
   return `${hero(page, "/custom/lmdbwebsite/public/subscribe.php")}
+${deviceShowcase()}
 <section class="section">
   <div class="section-inner">
     <h2>${escapeHtml(page.sections[0].title)}</h2>
@@ -133,12 +198,14 @@ function homePage(page) {
     <h2>Un tunnel d'abonnement connecte a Dolibarr</h2>
     <div class="grid">${steps}</div>
   </div>
-</section>`;
+</section>
+${integrationsSection()}`;
 }
 
 function fonctionnementPage(page) {
   const rows = page.features.map(([title, text]) => `<div class="feature-row"><h3>${escapeHtml(title)}</h3><p>${escapeHtml(text)}</p></div>`).join("");
   return `${hero(page)}
+${visualCards()}
 <section class="section">
   <div class="section-inner split">
     <div>
@@ -175,6 +242,7 @@ function pricingPage(page) {
     <div class="grid">${cards}</div>
   </div>
 </section>
+${integrationsSection()}
 <section class="section alt">
   <div class="section-inner contact-panel">
     <h2>Besoin d'une offre sur mesure ?</h2>
@@ -242,8 +310,10 @@ async function writePage(base, page, html) {
 await rm(path.join(root, "dist"), { recursive: true, force: true });
 await rm(outDolibarrResource, { recursive: true, force: true });
 await mkdir(path.join(outSite, "assets"), { recursive: true });
+await mkdir(path.join(outSite, "assets/img"), { recursive: true });
 for (const output of dolibarrOutputs) {
   await mkdir(path.join(output, "assets"), { recursive: true });
+  await mkdir(path.join(output, "assets/img"), { recursive: true });
   await mkdir(path.join(output, "pages"), { recursive: true });
 }
 
@@ -252,6 +322,10 @@ await writeFile(path.join(outSite, "assets/main.js"), await readFile(path.join(r
 for (const output of dolibarrOutputs) {
   await writeFile(path.join(output, "assets/styles.css"), await readFile(path.join(root, "src/styles.css"), "utf8"));
   await writeFile(path.join(output, "assets/main.js"), await readFile(path.join(root, "src/main.js"), "utf8"));
+}
+await cp(path.join(sourceAssets, "img"), path.join(outSite, "assets/img"), { recursive: true });
+for (const output of dolibarrOutputs) {
+  await cp(path.join(sourceAssets, "img"), path.join(output, "assets/img"), { recursive: true });
 }
 
 for (const page of content.pages) {
@@ -293,6 +367,7 @@ Les commentaires DOLIBARR_EDITABLE indiquent les blocs qui doivent rester modifi
 Assets:
 - assets/styles.css
 - assets/main.js
+- assets/img
 `;
 for (const output of dolibarrOutputs) {
   await writeFile(path.join(output, "README.md"), dolibarrReadme);

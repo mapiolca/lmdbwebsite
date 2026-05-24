@@ -36,6 +36,7 @@ $values = array(
 	'lastname' => '',
 	'email' => '',
 	'phone' => '',
+	'siret' => '',
 	'address' => '',
 	'zip' => '',
 	'town' => '',
@@ -66,6 +67,13 @@ if ($posted) {
 	}
 	if (!filter_var($values['email'], FILTER_VALIDATE_EMAIL)) {
 		$errors[] = 'L email de facturation est invalide.';
+	}
+	$values['siret'] = preg_replace('/\D/', '', $values['siret']);
+	if (strlen($values['siret']) !== 14) {
+		$errors[] = 'Le SIRET doit contenir 14 chiffres.';
+	}
+	if ($values['phone'] === '') {
+		$errors[] = 'Le telephone est requis.';
 	}
 	if ($values['address'] === '' || $values['zip'] === '' || $values['town'] === '') {
 		$errors[] = 'L adresse de facturation complete est requise.';
@@ -122,17 +130,17 @@ foreach (array('utm_source', 'utm_medium', 'utm_campaign') as $utmKey) {
 }
 print '<label class="hidden-field">Site web<input type="text" name="website" autocomplete="off"></label>';
 print '<div class="form-grid">';
-print '<label>Offre<select name="offer">';
+print '<label>Offre<select required name="offer">';
 foreach (lmdbwebsite_public_offers() as $offerItem) {
 	$id = (string) ($offerItem['id'] ?? '');
 	print '<option value="'.lmdbwebsite_escape($id).'"'.lmdbwebsite_public_selected($id, $offer).'>'.lmdbwebsite_escape($offerItem['name'] ?? '').'</option>';
 }
 print '</select></label>';
-print '<label>Frequence<select name="frequency">';
+print '<label>Frequence<select required name="frequency">';
 print '<option value="monthly"'.lmdbwebsite_public_selected('monthly', $frequency).'>Mensuelle</option>';
 print '<option value="annual"'.lmdbwebsite_public_selected('annual', $frequency).'>Annuelle</option>';
 print '</select></label>';
-print '<label class="full">Mode de reglement<select name="recurrence_mode">';
+print '<label class="full">Mode de reglement<select required name="recurrence_mode">';
 foreach ($allowedModes as $mode) {
 	print '<option value="'.lmdbwebsite_escape($mode).'"'.lmdbwebsite_public_selected($mode, $recurrenceMode).'>'.lmdbwebsite_escape(lmdbwebsite_public_recurrence_label($mode)).'</option>';
 }
@@ -141,12 +149,13 @@ print '<label>Entreprise<input required type="text" name="company_name" value="'
 print '<label>Email de facturation<input required type="email" name="email" value="'.lmdbwebsite_escape($values['email']).'"></label>';
 print '<label>Prenom<input required type="text" name="firstname" value="'.lmdbwebsite_escape($values['firstname']).'"></label>';
 print '<label>Nom<input required type="text" name="lastname" value="'.lmdbwebsite_escape($values['lastname']).'"></label>';
-print '<label>Telephone<input type="tel" name="phone" value="'.lmdbwebsite_escape($values['phone']).'"></label>';
+print '<label>Telephone<input required type="tel" name="phone" value="'.lmdbwebsite_escape($values['phone']).'"></label>';
+print '<label>SIRET<input required type="text" name="siret" inputmode="numeric" pattern="[0-9 ]{14,17}" autocomplete="off" value="'.lmdbwebsite_escape($values['siret']).'"></label>';
 print '<label>Code postal<input required type="text" name="zip" value="'.lmdbwebsite_escape($values['zip']).'"></label>';
 print '<label class="full">Adresse<input required type="text" name="address" value="'.lmdbwebsite_escape($values['address']).'"></label>';
 print '<label>Ville<input required type="text" name="town" value="'.lmdbwebsite_escape($values['town']).'"></label>';
 print '</div>';
-print '<label class="checkbox"><input type="checkbox" name="accept_terms" value="1"><span>J accepte les conditions de vente et la creation des objets Dolibarr necessaires a l abonnement.</span></label>';
+print '<label class="checkbox"><input required type="checkbox" name="accept_terms" value="1"><span>J accepte les conditions de vente et la creation des objets Dolibarr necessaires a l abonnement.</span></label>';
 print '<div class="actions"><button type="submit">Continuer vers le paiement</button><a class="button secondary" href="/contact/">Offre sur mesure</a></div>';
 print '</form>';
 print '</section>';

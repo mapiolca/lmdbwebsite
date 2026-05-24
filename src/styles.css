@@ -22,7 +22,7 @@
 body {
   margin: 0;
   color: var(--ink);
-  background: var(--surface);
+  background: var(--surface) url("/assets/img/texture-paper.png") repeat;
   line-height: 1.5;
 }
 
@@ -64,6 +64,12 @@ img {
   gap: 10px;
   font-weight: 800;
   text-decoration: none;
+}
+
+.brand-logo {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
 }
 
 .brand-mark {
@@ -125,7 +131,7 @@ img {
 
 .hero {
   padding: 72px 0 40px;
-  background: linear-gradient(180deg, #eef5fb 0%, #fff 72%);
+  background: url("/assets/img/texture-diag-lines.png") repeat, linear-gradient(180deg, #eef5fb 0%, #fff 72%);
 }
 
 .hero-grid {
@@ -201,6 +207,10 @@ h3 {
   background: var(--surface-soft);
 }
 
+.visual-section {
+  background: #fff;
+}
+
 .split {
   display: grid;
   grid-template-columns: minmax(0, 0.82fr) minmax(320px, 1fr);
@@ -216,6 +226,117 @@ h3 {
 
 .grid.two {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.section-heading {
+  max-width: 760px;
+  margin-bottom: 28px;
+}
+
+.device-showcase {
+  display: grid;
+  grid-template-columns: minmax(0, 0.72fr) minmax(420px, 1fr);
+  gap: 42px;
+  align-items: center;
+}
+
+.device-media {
+  position: relative;
+  min-height: 360px;
+}
+
+.device-frame {
+  position: relative;
+  margin: 0;
+}
+
+.device-shell,
+.device-screen {
+  display: block;
+}
+
+.laptop-frame {
+  width: min(100%, 680px);
+  margin-left: auto;
+}
+
+.laptop-screen {
+  position: absolute;
+  top: 6.8%;
+  left: 12.4%;
+  width: 75.1%;
+  height: 79.4%;
+  object-fit: cover;
+}
+
+.phone-frame {
+  position: absolute;
+  right: -4px;
+  bottom: 0;
+  width: 24%;
+  min-width: 120px;
+  filter: drop-shadow(0 18px 30px rgba(23, 32, 42, 0.18));
+}
+
+.phone-screen {
+  position: absolute;
+  top: 14.3%;
+  left: 7.3%;
+  width: 85.3%;
+  height: 71.7%;
+  object-fit: cover;
+}
+
+.visual-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.visual-card {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fff;
+}
+
+.visual-card img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.visual-card div {
+  padding: 20px;
+}
+
+.visual-card p {
+  color: var(--muted);
+}
+
+.integration-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.integration-card {
+  display: grid;
+  min-height: 126px;
+  padding: 18px;
+  place-items: center;
+  gap: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fff;
+  text-align: center;
+  font-weight: 750;
+}
+
+.integration-card img {
+  max-width: 92px;
+  max-height: 54px;
+  object-fit: contain;
 }
 
 .card {
@@ -380,12 +501,22 @@ h3 {
   .hero-grid,
   .split,
   .grid,
-  .grid.two {
+  .grid.two,
+  .device-showcase,
+  .visual-grid {
     grid-template-columns: 1fr;
+  }
+
+  .integration-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .hero {
     padding-top: 42px;
+  }
+
+  .device-media {
+    min-height: 260px;
   }
 }
 
@@ -398,5 +529,13 @@ h3 {
   .button {
     width: 100%;
   }
-}
 
+  .integration-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .phone-frame {
+    width: 30%;
+    min-width: 92px;
+  }
+}
